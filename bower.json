@@ -1,0 +1,12 @@
+{
+  "name": "ETF Trader",
+  "version": "0.0.0",
+  "authors": [
+    "David Watkins",
+    "David Chen"
+  ],
+  "dependencies": {
+    "bootstrap": "*",
+    "angular":"*"
+  }
+}
