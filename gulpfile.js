@@ -12,11 +12,11 @@ var   gulp = require('gulp')
 	, paths;
 
 paths = {
-	css:    ['src/css/*.css', 'src/bower_components/modal/stylesheets/jquery.modal.css'],
+	css:    ['src/css/*.css', 		'bower_components/bootstrap/dist/css/bootstrap.min.css'],
 	libs:   [
-		'src/bower_components/angular/angular.min.js',
-		'src/bower_components/bootstrap/dist/css/bootstrap.min.css',
-		'src/bower_components/bootstrap/dist/js/bootstrap.min.js'
+		'bower_components/angular/angular.min.js',
+		'bower_components/jquery/dist/jquery.min.js',
+		'bower_components/bootstrap/dist/js/bootstrap.min.js'
 	],
 	js:     ['src/js/**/*.js'],
 	dist:   './dist/',
