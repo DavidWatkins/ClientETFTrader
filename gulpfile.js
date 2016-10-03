@@ -9,15 +9,12 @@ var   gulp = require('gulp')
 	, jshint = require('gulp-jshint')
 	, uglify = require('gulp-uglify')
 	, connect = require('gulp-connect')
-	, spawn = require('child_process').spawn
-	, paths
-	, node;
+	, paths;
 
 paths = {
-	assets: 'src/assets/**/*',
 	css:    ['src/css/*.css', 'src/bower_components/modal/stylesheets/jquery.modal.css'],
 	libs:   [
-		'src/bower_components/jquery/dist/jquery.min.js',
+		'src/bower_components/angular/angular.min.js',
 		'src/bower_components/bootstrap/dist/css/bootstrap.min.css',
 		'src/bower_components/bootstrap/dist/js/bootstrap.min.js'
 	],
@@ -32,16 +29,11 @@ gulp.task('clean', function (cb) {
 	del([paths.dist], cb);
 });
 
-
-//Copy all assets
-gulp.task('copy-assets', function () {
-	gulp.src(paths.favicon)
-		.pipe(gulp.dest(paths.dist))
-		.on('error', gutil.log);
-
-	gulp.src(paths.assets)
-		.pipe(gulp.dest(paths.dist + 'assets'))
-		.on('error', gutil.log);
+gulp.task('jshint', function () { 
+	return gulp
+		  .src(paths.js)
+		  .pipe(jshint())
+		  .pipe(jshint.reporter('fail'));
 });
 
 //Copy all bower dependencies
@@ -92,5 +84,5 @@ gulp.task('html', function(){
 		.on('error', gutil.log);
 });
 
-gulp.task('build', ['clean', 'copy-assets', 'copy-vendor', 'uglify', 'minifycss', 'processhtml', 'minifyhtml']);
+gulp.task('build', ['clean', 'jshint', 'copy-vendor', 'uglify', 'minifycss', 'processhtml', 'minifyhtml']);
 gulp.task('default', ['build']);
