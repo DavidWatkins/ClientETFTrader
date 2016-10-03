@@ -1,9 +1,8 @@
 #!/bin/env node
-//  OpenShift Walking Node application
+//ETF Trader Node application
 var express = require('express');
 var fs      = require('fs');
 var favicon = require('serve-favicon');
-var json2csv = require('express-json2csv');
 var bodyParser = require('body-parser');
 var http = require('http');
 
@@ -12,23 +11,13 @@ var mongo = require('mongodb');
 var monk = require('monk');
 
 // default to a 'localhost' configuration:
-var connection_string = '127.0.0.1:27017/wints';
-// if OPENSHIFT env variables are present, use the available connection info:
-if(process.env.OPENSHIFT_MONGODB_DB_PASSWORD){
-    connection_string = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
-        process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
-        process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
-        process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
-        process.env.OPENSHIFT_APP_NAME +
-        "?authSource=admin";
-}
+var connection_string = '127.0.0.1:27017/etftrader';
 var db = monk(connection_string);
 
 var __dirname = 'dist/';
 
-
 /**
- *  Define the Walking application.
+ *  Define the application.
  */
 var SampleApp = function() {
 
@@ -45,15 +34,8 @@ var SampleApp = function() {
      */
     self.setupVariables = function() {
         //  Set the environment variables we need.
-        self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
-        self.port      = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3002;
-
-        if (typeof self.ipaddress === "undefined") {
-            //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
-            //  allows us to run/test the app locally.
-            console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
-            self.ipaddress = "127.0.0.1";
-        }
+        self.ipaddress = "127.0.0.1";
+        self.port      = process.env.PORT || 3002;
     };
 
 
@@ -124,54 +106,82 @@ var SampleApp = function() {
         //    res.send( fs.readFileSync(__dirname + 'index.html') );
         //};
 
-        self.getRoutes['/getData'] = function(req, res) {
-            // Set our internal DB variable
-            var db = req.db;
+        // self.getRoutes['/getData'] = function(req, res) {
+        //     // Set our internal DB variable
+        //     var db = req.db;
 
-            // Set our collection
-            var collection = db.get('usercollection');
+        //     // Set our collection
+        //     var collection = db.get('usercollection');
 
-            collection.find({},{},function(e,docs){
+        //     collection.find({},{},function(e,docs){
 
-                if(docs == null) {
-                    res.send("No data in database!");
-                    return;
-                }
+        //         if(docs == null) {
+        //             res.send("No data in database!");
+        //             return;
+        //         }
 
-                var columns = [{
-                    prop: 'qualtricsID',
-                    label: 'Qualtrics ID'
-                }, {
-                    prop: 'agencyType',
-                    label: 'Agency Type'
-                }, {
-                    prop: 'timeSpent',
-                    label: 'Time Spent Playing (sec)'
-                }];
+        //         var columns = [{
+        //             prop: 'qualtricsID',
+        //             label: 'Qualtrics ID'
+        //         }, {
+        //             prop: 'agencyType',
+        //             label: 'Agency Type'
+        //         }, {
+        //             prop: 'timeSpent',
+        //             label: 'Time Spent Playing (sec)'
+        //         }];
 
-                for(var i = 1; i <= 10; i++) {
-                    columns.push({
-                        prop:  "Scenario" + i,
-                        label: "Scenario " + i
-                    });
-                    columns.push({
-                        prop:  "Scenario" + i + "Choice",
-                        label: "Scenario " + i + " Choice"
-                    });
-                }
+        //         for(var i = 1; i <= 10; i++) {
+        //             columns.push({
+        //                 prop:  "Scenario" + i,
+        //                 label: "Scenario " + i
+        //             });
+        //             columns.push({
+        //                 prop:  "Scenario" + i + "Choice",
+        //                 label: "Scenario " + i + " Choice"
+        //             });
+        //         }
 
-                res.csv('currentData', docs, columns);
+        //         res.csv('currentData', docs, columns);
 
 
-            });
+        //     });
 
-            //Collect all data from mongodb
-            //Convert data to CSV
-            //Send CSV to user
-        };
+        //     //Collect all data from mongodb
+        //     //Convert data to CSV
+        //     //Send CSV to user
+        // };
 
-        self.postRoutes['/submitData'] = function(req, res) {
-            // Set our internal DB variable
+        // self.postRoutes['/submitData'] = function(req, res) {
+        //     // Set our internal DB variable
+        //     var db = req.db;
+
+        //     console.log(req.body);
+
+        //     if(req.body == null) {
+        //         res.send("Invalid Query");
+        //         return;
+        //     }
+
+        //     // Get our form values. These rely on the "name" attributes
+        //     var data = req.body;
+
+        //     // Set our collection
+        //     var collection = db.get('usercollection');
+
+        //     // Submit to the DB
+        //     collection.insert(data, function (err, doc) {
+        //         if (err) {
+        //             // If it failed, return error
+        //             res.send("There was a problem adding the information to the database.");
+        //         }
+        //         else {
+        //             res.send("Success");
+        //         }
+        //     });
+        // };
+
+        self.postRoutes['/submitTrade'] = function(req, res) {
             var db = req.db;
 
             console.log(req.body);
@@ -181,31 +191,40 @@ var SampleApp = function() {
                 return;
             }
 
-            // Get our form values. These rely on the "name" attributes
             var data = req.body;
 
-            // Set our collection
-            var collection = db.get('usercollection');
+            var collection = db.get('current_trades');
 
-            // Submit to the DB
-            collection.insert(data, function (err, doc) {
-                if (err) {
-                    // If it failed, return error
-                    res.send("There was a problem adding the information to the database.");
-                }
-                else {
+            collection.insert(data, function(err, doc) {//Should be sanitizing our input
+                if(err) {
+                    res.send("There was a problem adding the information to the database");
+                } else {
                     res.send("Success");
                 }
             });
         };
+
+        self.postRoutes['/getSubmittedTrades'] = function(req, res) {
+            var collection = db.get('usercollection');
+
+            collection.find({},{},function(e,docs){
+
+                if(docs == null) {
+                    res.send("No data in database!");
+                    return;
+                }
+
+                //SANITIZE
+                res.send(docs);
+            });
+        };
+
+        self.postRoutes['/getExchangeTrades'] = function(req, res) {
+
+        };
     };
 
     self.addStaticDirectories = function() {
-      //self.app.use('/js', express.static(__dirname + 'js'));
-      //self.app.use('/favicon.ico', express.static(__dirname + 'favicon.ico'));
-      //self.app.use('/css', express.static(__dirname + 'css'));
-      //self.app.use('/bower_components', express.static(__dirname + 'bower_components'));
-      //self.app.use('/assets', express.static(__dirname + 'assets'));
         self.app.use('/', express.static(__dirname));
         self.app.use('/index.html*', express.static(__dirname + 'index.html'));
 
@@ -215,7 +234,6 @@ var SampleApp = function() {
             extended: true
         }));
         self.app.use(bodyParser.json());
-        self.app.use(json2csv);
     };
 
 
@@ -273,8 +291,6 @@ var SampleApp = function() {
     };
 
 };
-
-
 
 /**
  *  main():  Main code.

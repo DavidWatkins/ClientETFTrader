@@ -42,6 +42,10 @@ gulp.task('copy-vendor', function () {
 	gulp.src(paths.libs)
 		.pipe(gulp.dest(paths.dist))
 		.on('error', gutil.log);
+
+	gulp.src(paths.favicon)
+		.pipe(gulp.dest(paths.dist))
+		.on('error', gutil.log);
 });
 
 //Shrink down HTML, JS and CSS files
