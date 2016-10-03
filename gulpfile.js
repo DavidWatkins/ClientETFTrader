@@ -33,7 +33,8 @@ gulp.task('jshint', function () {
 	return gulp
 		  .src(paths.js)
 		  .pipe(jshint())
-		  .pipe(jshint.reporter('fail'));
+		  .pipe(jshint.reporter('default'));
+		  // .pipe(jshint.reporter('fail')); Add this back to prevent build
 });
 
 //Copy all bower dependencies
