@@ -13,12 +13,14 @@ var monk = require('monk');
 // default to a 'localhost' configuration:
 var connection_string = '127.0.0.1:27017/etftrader';
 var db = monk(connection_string);
+var dbfunctions = require("./js/databasefunctions")
 
 var __dirname = 'dist/';
 
 /**
  *  Define the application.
  */
+
 var SampleApp = function() {
 
     //  Scope.
@@ -38,7 +40,6 @@ var SampleApp = function() {
         self.port      = process.env.PORT || 3002;
     };
 
-
     /**
      *  Populate the cache.
      */
@@ -51,13 +52,11 @@ var SampleApp = function() {
         self.zcache['index.html'] = fs.readFileSync(__dirname + 'index.html');
     };
 
-
     /**
      *  Retrieve entry (content) from cache.
      *  @param {string} key  Key identifying content to retrieve from cache.
      */
     self.cache_get = function(key) { return self.zcache[key]; };
-
 
     /**
      *  terminator === the termination handler
@@ -73,7 +72,6 @@ var SampleApp = function() {
         console.log('%s: Node server stopped.', Date(Date.now()) );
     };
 
-
     /**
      *  Setup termination handlers (for exit and a list of signals).
      */
@@ -88,7 +86,6 @@ var SampleApp = function() {
             process.on(element, function() { self.terminator(element); });
         });
     };
-
 
     /*  ================================================================  */
     /*  App server functions (main app logic here).                       */
@@ -107,117 +104,9 @@ var SampleApp = function() {
         //     res.setHeader('Content-Type', 'text/html');
         //     res.send( fs.readFileSync(__dirname + 'index.html') );
         // };
+        self.getRoutes['/getSubmittedTrades'] = dbfunctions.getSubmittedTrades;
 
-        // self.getRoutes['/getData'] = function(req, res) {
-        //     // Set our internal DB variable
-        //     var db = req.db;
-
-        //     // Set our collection
-        //     var collection = db.get('usercollection');
-
-        //     collection.find({},{},function(e,docs){
-
-        //         if(docs == null) {
-        //             res.send("No data in database!");
-        //             return;
-        //         }
-
-        //         var columns = [{
-        //             prop: 'qualtricsID',
-        //             label: 'Qualtrics ID'
-        //         }, {
-        //             prop: 'agencyType',
-        //             label: 'Agency Type'
-        //         }, {
-        //             prop: 'timeSpent',
-        //             label: 'Time Spent Playing (sec)'
-        //         }];
-
-        //         for(var i = 1; i <= 10; i++) {
-        //             columns.push({
-        //                 prop:  "Scenario" + i,
-        //                 label: "Scenario " + i
-        //             });
-        //             columns.push({
-        //                 prop:  "Scenario" + i + "Choice",
-        //                 label: "Scenario " + i + " Choice"
-        //             });
-        //         }
-
-        //         res.csv('currentData', docs, columns);
-        //     });
-
-        //     //Collect all data from mongodb
-        //     //Convert data to CSV
-        //     //Send CSV to user
-        // };
-
-        // self.postRoutes['/submitData'] = function(req, res) {
-        //     // Set our internal DB variable
-        //     var db = req.db;
-
-        //     console.log(req.body);
-
-        //     if(req.body == null) {
-        //         res.send("Invalid Query");
-        //         return;
-        //     }
-
-        //     // Get our form values. These rely on the "name" attributes
-        //     var data = req.body;
-
-        //     // Set our collection
-        //     var collection = db.get('usercollection');
-
-        //     // Submit to the DB
-        //     collection.insert(data, function (err, doc) {
-        //         if (err) {
-        //             // If it failed, return error
-        //             res.send("There was a problem adding the information to the database.");
-        //         }
-        //         else {
-        //             res.send("Success");
-        //         }
-        //     });
-        // };
-
-        self.postRoutes['/submitTrade'] = function(req, res) {
-            var db = req.db;
-
-            console.log(req.body);
-
-            if(req.body == null) {
-                res.send("Invalid Query");
-                return;
-            }
-
-            var data = req.body;
-
-            var collection = db.get('current_trades');
-
-            collection.insert(data, function(err, doc) {//Should be sanitizing our input
-                if(err) {
-                    res.send("There was a problem adding the information to the database");
-                } else {
-                    res.send("Success");
-                }
-            });
-        };
-
-        self.getRoutes['/getSubmittedTrades'] = function(req, res) {
-            var collection = db.get('current_trades');
-
-            collection.find({},{},function(e,docs){
-
-                if(docs == null) {
-                    res.send("No data in database!");
-                    return;
-                }
-
-                //SANITIZE
-                res.send(docs);
-            });
-        };
+        self.postRoutes['/submitTrade'] = dbfunctions.submitTrade;
 
         self.postRoutes['/getExchangeTrades'] = function(req, res) {
 

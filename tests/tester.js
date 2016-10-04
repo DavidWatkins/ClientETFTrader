@@ -1,3 +1,4 @@
+"use strict";
 // it('should check controller as', function() {
 //   var container = element(by.id('ctrl-as-exmpl'));
 //     expect(container.element(by.model('settings.name'))
@@ -27,3 +28,33 @@
 //       .toBe('yourname@example.org');
 // });
 
+describe("sanity check", function() {
+	it("checks if true is equal to true", function() {
+		expect(true).toBe(true);
+	})
+})
+
+//Server Checks
+
+var dbfunctions = require('../js/databasefunctions');
+
+describe("interacts with database", function() {
+
+	it("can send a trade", function(done) {
+		var trade = {name: 'lul', body: {
+	        "time": Date.now(),
+	        "quantity": Math.floor(Math.random() * 100 + 100),
+	        "order": "SELL",
+	        "cost": Math.random() * 200 + 50
+		}}
+		dbfunctions.submitTrade(trade, null, function() {
+			done();
+		});
+	})
+
+	it("can receive data", function(done) {
+		dbfunctions.getSubmittedTrades(null, null, function() {
+			done();
+		});
+	})
+})

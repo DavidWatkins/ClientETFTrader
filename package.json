@@ -26,8 +26,8 @@
     "gulp-uglify": "*",
     "gulp-util": "*",
     "gulp-watch": "*",
-    "gulp-nodemon":"*",
-    "gulp-clean":"*",
+    "gulp-nodemon": "*",
+    "gulp-clean": "*",
     "lodash": "*",
     "tiny-lr": "*",
     "express": "*",
@@ -37,7 +37,7 @@
     "serve-favicon": "~2.2.1",
     "express-json2csv": "*",
     "body-parser": "*",
-    "bson":"*"
+    "bson": "*"
   },
   "engines": {
     "node": ">= 0.10",
@@ -45,5 +45,8 @@
   },
   "license": "MIT",
   "private": true,
-  "main": "server.js"
+  "main": "server.js",
+  "devDependencies": {
+    "gulp-jasmine": "^2.4.2"
+  }
 }

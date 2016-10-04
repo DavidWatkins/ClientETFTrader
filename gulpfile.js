@@ -12,6 +12,7 @@ var   gulp = require('gulp')
 	, nodemon = require('gulp-nodemon')
 	, clean = require('gulp-clean')
 	, runSequence = require('run-sequence')
+	, jasmine = require('gulp-jasmine')
 	, paths;
 
 paths = {
@@ -25,7 +26,8 @@ paths = {
 	js:     ['src/js/**/*.js'],
 	dist:   './dist/',
 	favicon:'src/favicon.ico',
-	src: './src/'
+	src: './src/',
+	tests: './tests/*.js'
 };
 
 
@@ -35,6 +37,7 @@ gulp.task('clean', function () {
         .pipe(clean({force: true}));
 });
 
+//static analysis
 gulp.task('jshint', function () { 
 	return gulp
 		  .src(paths.js)
@@ -42,6 +45,13 @@ gulp.task('jshint', function () {
 		  .pipe(jshint.reporter('default'));
 		  // .pipe(jshint.reporter('fail')); Add this back to prevent build
 });
+
+//test suit
+gulp.task('tests', function () {
+	return gulp
+		.src(paths.tests)
+		.pipe(jasmine());
+})
 
 //Copy all bower dependencies
 gulp.task('copy-vendor', function () {
@@ -89,7 +99,7 @@ gulp.task('html', function(){
 		.on('error', gutil.log);
 });
 
-gulp.task('build', ['jshint', 'copy-vendor', 'uglify', 'minifycss', 'processhtml']);
+gulp.task('build', ['jshint', 'copy-vendor', 'uglify', 'minifycss', 'processhtml', 'tests']);
 
 gulp.task('develop', function(done) {
     return runSequence('clean', 'build', function() {
