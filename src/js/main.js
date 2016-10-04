@@ -15,7 +15,7 @@
           $scope.trades.push(res.data[i]);
         }
         return res.data;
-      })
+      });
     }
 
     getTrades();

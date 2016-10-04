@@ -35,12 +35,19 @@ gulp.task('clean', function () {
         .pipe(clean({force: true}));
 });
 
-gulp.task('jshint', function () { 
+gulp.task('jshint-web', function () { 
 	return gulp
 		  .src(paths.js)
 		  .pipe(jshint())
 		  .pipe(jshint.reporter('default'));
 		  // .pipe(jshint.reporter('fail')); Add this back to prevent build
+});
+
+gulp.task('jshint-node', function () {
+	return gulp
+			.src('server.js')
+			.pipe(jshint())
+			.pipe(jshint.reporter('default'));
 });
 
 //Copy all bower dependencies
@@ -89,7 +96,7 @@ gulp.task('html', function(){
 		.on('error', gutil.log);
 });
 
-gulp.task('build', ['jshint', 'copy-vendor', 'uglify', 'minifycss', 'processhtml']);
+gulp.task('build', ['jshint-web', 'jshint-node', 'copy-vendor', 'uglify', 'minifycss', 'processhtml']);
 
 gulp.task('develop', function(done) {
     return runSequence('clean', 'build', function() {

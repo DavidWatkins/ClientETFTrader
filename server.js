@@ -186,7 +186,7 @@ var SampleApp = function() {
 
             console.log(req.body);
 
-            if(req.body == null) {
+            if(req.body === null) {
                 res.send("Invalid Query");
                 return;
             }
@@ -209,7 +209,7 @@ var SampleApp = function() {
 
             collection.find({},{},function(e,docs){
 
-                if(docs == null) {
+                if(docs === null) {
                     res.send("No data in database!");
                     return;
                 }
@@ -253,11 +253,12 @@ var SampleApp = function() {
         });
 
         //  Add handlers for the app (from the routes).
-        for (var r in self.getRoutes) {
-            self.app.get(r, self.getRoutes[r]);
+        var route;
+        for (route in self.getRoutes) {
+            self.app.get(route, self.getRoutes[route]);
         }
-        for (var r in self.postRoutes) {
-            self.app.post(r, self.postRoutes[r]);
+        for (route in self.postRoutes) {
+            self.app.post(route, self.postRoutes[route]);
         }
 
     };
