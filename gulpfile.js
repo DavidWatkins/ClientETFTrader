@@ -9,6 +9,9 @@ var   gulp = require('gulp')
 	, jshint = require('gulp-jshint')
 	, uglify = require('gulp-uglify')
 	, connect = require('gulp-connect')
+	, nodemon = require('gulp-nodemon')
+	, clean = require('gulp-clean')
+	, runSequence = require('run-sequence')
 	, paths;
 
 paths = {
@@ -21,13 +24,15 @@ paths = {
 	],
 	js:     ['src/js/**/*.js'],
 	dist:   './dist/',
-	favicon:'src/favicon.ico'
+	favicon:'src/favicon.ico',
+	src: './src/'
 };
 
 
 //CLEAN
-gulp.task('clean', function (cb) {
-	del([paths.dist], cb);
+gulp.task('clean', function () {
+	return gulp.src(paths.dist, {read: false})
+        .pipe(clean({force: true}));
 });
 
 gulp.task('jshint', function () { 
@@ -41,54 +46,72 @@ gulp.task('jshint', function () {
 //Copy all bower dependencies
 gulp.task('copy-vendor', function () {
 	gulp.src(paths.libs)
-		.pipe(gulp.dest(paths.dist))
+		.pipe(gulp.dest(paths.dist, {overwrite: true}))
 		.on('error', gutil.log);
 
-	gulp.src(paths.favicon)
-		.pipe(gulp.dest(paths.dist))
+	return gulp.src(paths.favicon)
+		.pipe(gulp.dest(paths.dist, {overwrite: true}))
 		.on('error', gutil.log);
 });
 
 //Shrink down HTML, JS and CSS files
 gulp.task('uglify', function () {
-	gulp.src(paths.js)
+	return gulp.src(paths.js)
 		.pipe(concat('main.min.js'))
-		.pipe(gulp.dest(paths.dist))
 		.pipe(uglify({outSourceMaps: false}))
-		.pipe(gulp.dest(paths.dist));
+		.pipe(gulp.dest(paths.dist, {overwrite: true}));
 });
 gulp.task('minifycss', function () {
-	gulp.src(paths.css)
+	return gulp.src(paths.css)
 		.pipe(minifycss({
 			keepSpecialComments: false,
 			removeEmpty: true
 		}))
 		.pipe(rename({suffix: '.min'}))
-		.pipe(gulp.dest(paths.dist))
-		.on('error', gutil.log);
-});
-gulp.task('minifyhtml', function() {
-	gulp.src('dist/index.html')
-		.pipe(minifyhtml())
-		.pipe(gulp.dest(paths.dist))
+		.pipe(gulp.dest(paths.dist, {overwrite: true}))
 		.on('error', gutil.log);
 });
 
 //Compile HTML code
 gulp.task('processhtml', function() {
-	gulp.src('src/index.html')
+	return gulp.src('src/index.html')
 		.pipe(processhtml({}))
-		.pipe(gulp.dest(paths.dist))
+		.pipe(minifyhtml())
+		.pipe(gulp.dest(paths.dist, {overwrite: true}))
 		.on('error', gutil.log);
 });
 
 
 //Bring over HTML
 gulp.task('html', function(){
-	gulp.src(paths.dist)
+	return gulp.src(paths.dist)
 		.pipe(connect.reload())
 		.on('error', gutil.log);
 });
 
-gulp.task('build', ['clean', 'jshint', 'copy-vendor', 'uglify', 'minifycss', 'processhtml', 'minifyhtml']);
+gulp.task('build', ['jshint', 'copy-vendor', 'uglify', 'minifycss', 'processhtml']);
+
+gulp.task('develop', function(done) {
+    return runSequence('clean', 'build', function() {
+        return done();
+    });
+});
+
+gulp.task('nodemon', ['develop'], function () {
+  var stream = nodemon({ script: 'server.js'
+          , ext: 'html js css'
+          , ignore: [paths.dist + '*']
+          , watch: [paths.src]
+          , tasks: ['develop'] })
+ 
+  return stream
+      .on('restart', function () {
+        console.log('restarted!')
+      })
+      .on('crash', function() {
+        console.error('Application has crashed!\n')
+         stream.emit('restart', 10)  // restart the server in 10 seconds 
+      })
+});
+
 gulp.task('default', ['build']);
