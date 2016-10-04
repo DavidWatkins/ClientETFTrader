@@ -101,10 +101,12 @@ var SampleApp = function() {
         self.getRoutes = { };
         self.postRoutes = { };
 
-        //self.getRoutes['/'] = function(req, res) {
-        //    res.setHeader('Content-Type', 'text/html');
-        //    res.send( fs.readFileSync(__dirname + 'index.html') );
-        //};
+        // self.getRoutes['/'] = function(req, res) {
+        //     var db = req.db;
+
+        //     res.setHeader('Content-Type', 'text/html');
+        //     res.send( fs.readFileSync(__dirname + 'index.html') );
+        // };
 
         // self.getRoutes['/getData'] = function(req, res) {
         //     // Set our internal DB variable
@@ -143,8 +145,6 @@ var SampleApp = function() {
         //         }
 
         //         res.csv('currentData', docs, columns);
-
-
         //     });
 
         //     //Collect all data from mongodb
@@ -204,8 +204,8 @@ var SampleApp = function() {
             });
         };
 
-        self.postRoutes['/getSubmittedTrades'] = function(req, res) {
-            var collection = db.get('usercollection');
+        self.getRoutes['/getSubmittedTrades'] = function(req, res) {
+            var collection = db.get('current_trades');
 
             collection.find({},{},function(e,docs){
 
