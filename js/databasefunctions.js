@@ -10,6 +10,7 @@ exports.submitTrade = function(req, res, callback) {
 
     if(req.body == null) {
         res.send("Invalid Query");
+        return;
     }
 
     var data = req.body;
@@ -20,7 +21,9 @@ exports.submitTrade = function(req, res, callback) {
         if(err) {
             res.send("There was a problem adding the information to the database");
         } else {
-            callback();
+            if (res == null) {
+                callback();
+            }
             res.send("Success");
         }
     });
@@ -36,9 +39,11 @@ exports.getSubmittedTrades = function(req, res, callback) {
             return;
         }
 
-        callback();
+        if (res == null) {
+            callback();
+        }
+
         //SANITIZE
         res.send(docs);
     });
 };
-

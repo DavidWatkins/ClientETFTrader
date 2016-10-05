@@ -15,7 +15,7 @@
           $scope.trades.push(res.data[i]);
         }
         return res.data;
-      })
+      });
     }
 
     getTrades();
@@ -33,7 +33,6 @@
 
       $http.post('/submitTrade', new_trade);
 
-      console.log($scope.trades);
     };
 
   }]);
