@@ -13,7 +13,7 @@ var monk = require('monk');
 // default to a 'localhost' configuration:
 var connection_string = '127.0.0.1:27017/etftrader';
 var db = monk(connection_string);
-var dbfunctions = require("./js/databasefunctions")
+var dbfunctions = require("./js/databasefunctions");
 
 var __dirname = 'dist/';
 
