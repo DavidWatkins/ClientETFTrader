@@ -8,6 +8,8 @@
   "dependencies": {
     "bootstrap": "*",
     "angular":"1.5.8",
-    "jquery":"*"
+    "angular-route":"1.5.8",
+    "jquery":"*",
+    "highcharts":"*"
   }
 }

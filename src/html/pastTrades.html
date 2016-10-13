@@ -1,0 +1,48 @@
+<h1 class="page-header">Previous Trades</h1>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>time</th>
+        <th>quantity</th>
+        <th>order</th>
+        <th>cost</th>
+        <th>status</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr data-toggle="collapse" data-target="#demo{{trade.id}}" class="accordion-toggle" ng-repeat-start="trade in separatedTrades">
+          <td>{{trade.time}}</td>
+          <td>{{trade.quantity}}</td>
+          <td>{{trade.order}}</td>
+          <td>{{trade.cost}}</td>
+          <td ng-class="trade.status === 'unfulfilled' ? 'info' : trade.status === 'fulfilled' ? 'success' : 'danger'">{{trade.status}}</td>
+        </tr>
+        <tr ng-repeat-end>
+          <td colspan="12" class="hiddenRow">
+            <div class="accordian-body collapse" id="demo{{trade.id}}"> 
+              <h3 class='sub-header'>Divided Trades</h3>
+              <table class="table table-striped">
+                <thead>
+                  <th>time</th>
+                  <th>quantity</th>
+                  <th>order</th>
+                  <th>cost</th>
+                  <th>status</th>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="subtrade in trade.subtrades">
+                    <td>{{trade.time}}</td>
+                    <td>{{trade.quantity}}</td>
+                    <td>{{trade.order}}</td>
+                    <td>{{trade.cost}}</td>
+                    <td ng-class="trade.status === 'unfulfilled' ? 'info' : trade.status === 'fulfilled' ? 'success' : 'danger'">{{trade.status}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div> 
+          </td>
+        </tr>
+    </tbody>
+  </table>  
+</div>

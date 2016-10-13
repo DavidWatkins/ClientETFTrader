@@ -1,63 +1,62 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="mainApp">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="favicon.ico">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="favicon.ico">
 
-    <title>ETF Trader</title> 
+  <title>The Rosseforp Exchange</title> 
 
-    <!-- Bootstrap core CSS -->
-    <link href="bootstrap.min.css" rel="stylesheet"> 
+  <!-- Bootstrap core CSS -->
+  <link href="bootstrap.min.css" rel="stylesheet"> 
 
-    <!-- Custom styles for this template -->
-    <link href="dashboard.min.css" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="dashboard.min.css" rel="stylesheet">
 
-  </head>
+</head>
 
-  <body ng-controller="etfTraderController">
+<body ng-controller="etfTraderController">
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span> 
-          </button>
-          <a class="navbar-brand" href="#">ETF Trader</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Help</a></li>
-          </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
-        </div>
-      </div>
-    </nav>
-
+  <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
-      <div class="row">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span> 
+        </button>
+        <a class="navbar-brand" href="#">The Rosseforp Exchange</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#/dashboard">Dashboard</a></li>
+          <li><a href="#">Settings</a></li>
+          <li><a href="#">Help</a></li>
+        </ul>
+        <form class="navbar-form navbar-right">
+          <input type="text" class="form-control" placeholder="Search...">
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
 
       <!-- SIDEBAR -->
-        <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Analytics</a></li>
-            <li><a href="#">Export</a></li>
-          </ul>
-          <ul class="nav nav-sidebar">
+      <div class="col-sm-3 col-md-2 sidebar">
+        <ul class="nav nav-sidebar">
+          <li ng-class="{active:isActive('/dashboard')}"><a href="#/dashboard">Overview <span class="sr-only">(current)</span></a></li>
+          <li ng-class="{active:isActive('/pastTrades')}"><a href="#/pastTrades">Past Trades</a></li>
+          <li><a href="#">Analytics</a></li>
+          <li><a href="#">Export to CSV</a></li>
+        </ul>
+<!--           <ul class="nav nav-sidebar">
             <li><a href="">Nav item</a></li>
             <li><a href="">Nav item again</a></li>
             <li><a href="">One more nav</a></li>
@@ -66,34 +65,10 @@
             <li><a href="">Nav item again</a></li>
             <li><a href="">One more nav</a></li>
             <li><a href="">Another nav item</a></li>
-          </ul>
+          </ul> -->
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Dashboard</h1>
-
-          <button type="button" class="btn btn-primary" ng-click="addTrade()">Add Trade</button>
-
-          <h2 class="sub-header">Previous Trades</h2>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>time</th>
-                  <th>quantity</th>
-                  <th>order</th>
-                  <th>cost</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr ng-repeat="trade in trades">
-                  <td>{{trade.time}}</td>
-                  <td>{{trade.quantity}}</td>
-                  <td>{{trade.order}}</td>
-                  <td>{{trade.cost}}</td>
-                </tr>
-              </tbody>
-            </table>  
-          </div>
+          <div ng-view></div>
         </div>
       </div>
     </div>
@@ -101,10 +76,13 @@
     <script src="jquery.min.js"></script>
     <script src="bootstrap.min.js"></script>
     <script src="angular.min.js"></script>
+    <script src="highcharts.js"></script>
+    <script src="exporting.js"></script>
+    <script src="angular-route.min.js"></script>
     <script src="main.min.js"></script>
   </body>
-</html>
+  </html>
 
-    <!-- build:js main.min.js -->
-	<!-- <script src="js/main.js"></script> -->
-	<!-- /build -->   
+  <!-- build:js main.min.js -->
+  <!-- <script src="js/main.js"></script> -->
+  <!-- /build -->   

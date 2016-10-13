@@ -17,11 +17,16 @@ var   gulp = require('gulp')
 
 paths = {
 	css:    ['src/css/*.css'],
+	assets: ['src/assets/*'],
+	html:   ['src/html/*'],
 	libs:   [
 		'bower_components/angular/angular.min.js',
 		'bower_components/jquery/dist/jquery.min.js',
 		'bower_components/bootstrap/dist/css/bootstrap.min.css',
-		'bower_components/bootstrap/dist/js/bootstrap.min.js'
+		'bower_components/bootstrap/dist/js/bootstrap.min.js',
+		'bower_components/highcharts/highcharts.js',
+		'bower_components/highcharts/js/modules/exporting.js',
+		'bower_components/angular-route/angular-route.min.js'
 	],
 	js:     ['src/js/**/*.js'],
 	dist:   './dist/',
@@ -58,7 +63,7 @@ gulp.task('tests', function () {
 	return gulp
 		.src(paths.tests)
 		.pipe(jasmine());
-})
+});
 
 //Copy all bower dependencies
 gulp.task('copy-vendor', function () {
@@ -71,11 +76,23 @@ gulp.task('copy-vendor', function () {
 		.on('error', gutil.log);
 });
 
+gulp.task('copy-assets', function () {
+	return gulp.src(paths.assets)
+		.pipe(gulp.dest(paths.dist, {overwrite: true}))
+		.on('error', gutil.log);
+});
+
+gulp.task('copy-html', function () {
+	return gulp.src(paths.html)
+		.pipe(gulp.dest(paths.dist, {overwrite: true}))
+		.on('error', gutil.log);
+});
+
 //Shrink down HTML, JS and CSS files
 gulp.task('uglify', function () {
 	return gulp.src(paths.js)
 		.pipe(concat('main.min.js'))
-		.pipe(uglify({outSourceMaps: false}))
+		// .pipe(uglify({outSourceMaps: false}))
 		.pipe(gulp.dest(paths.dist, {overwrite: true}));
 });
 gulp.task('minifycss', function () {
@@ -107,7 +124,7 @@ gulp.task('html', function(){
 });
 
 
-gulp.task('build', ['jshint-web', 'jshint-node', 'copy-vendor', 'uglify', 'minifycss', 'processhtml', 'tests']);
+gulp.task('build', ['jshint-web', 'jshint-node', 'copy-vendor', 'copy-assets', 'copy-html', 'uglify', 'minifycss', 'processhtml']);
 
 gulp.task('develop', function(done) {
     return runSequence('clean', 'build', function() {
