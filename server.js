@@ -14,7 +14,7 @@ var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
 var configDB = require('./config/database.js');
-var dbfunctions = require("./js/databasefunctions");
+var dbfunctions = require("./app/tradeutils");
 var __dirname = 'dist/';
 
 // configuration ===============================================================

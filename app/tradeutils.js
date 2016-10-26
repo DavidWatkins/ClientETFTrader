@@ -60,8 +60,13 @@ exports.getAllTrades = function (req, res, callback) {
 exports.getTopBidHistory = function(req, res) {
 
     ExchangeRef.find(function(err, data) {
+        console.log(data);
+        data = _.pluck(data, 'local');
+        console.log(data);
         data = _.pluck(data, 'top_bid');
+        console.log(data);
         data = _.pluck(data, 'price');
+        console.log(data);
         res.send(data);
     });
 
