@@ -6,6 +6,7 @@
 
 var _ = require('underscore');
 var http = require('http');
+var ObjectId = require('mongoose').Types.ObjectId;
 
 var ExchangeRef = require('./models/exchangeref.js');
 var Order = require('./models/order.js');
@@ -18,16 +19,14 @@ exports.pollStart = function() {
 
  		var current_time = new Date().getTime();
 
-		Trade.find({fulfillBy : { $lt: current_time }, status: "Unfulfilled"}, function(err, data) {
-
-			console.log(data);
+		Trade.find({"local.fulfillBy" : { $lt: current_time }, "local.status": "Unfulfilled"}, function(err, data) {
 
 			_.map(data, function(x) {
 
 				var request_options = {
 					host: '127.0.0.1',
 					port: 8080,
-					path: '/order?side=sell&qty=50&price=0.0',
+					path: '/order?id=2&side=sell&qty=50&price=0.0',
 					method: 'GET'
 				};
 
@@ -43,13 +42,14 @@ exports.pollStart = function() {
 					// Once we're done streaming the response, parse it as json.
 					response.on('end', function() {
 						var json = JSON.parse(content);
-						console.log(json);
 						if (json.qty > 0) {
-							Trade.findById(x._id, function (err, trade) {
-
-								trade.fulfilledAt = json.timestamp;
-								trade.price = json.avg_price;
-								trade.status = 'Fulfilled'
+							Trade.update({_id: new ObjectId(x._id)}, { $set: 
+								{
+									"local.fulfilledAt": json.timestamp,
+									"local.price": json.avg_price,
+									"local.status": "Fulfilled"
+								}
+							}, function() {
 							})
 						}
 
@@ -65,7 +65,6 @@ exports.pollStart = function() {
 			method: 'GET'
 		};
 
-		console.log('started snapshoot');
 		http.request(request_options, function(response) {
 
 			var content = "";
@@ -78,14 +77,11 @@ exports.pollStart = function() {
 			// Once we're done streaming the response, parse it as json.
 			response.on('end', function() {
 				var json = JSON.parse(content);
-				console.log(json);
 				var snapshot = new ExchangeRef();
 				snapshot.local = json;
 				snapshot.save(function(err) {
             		if (err)
                 		throw err;
-                	else
-                		console.log('added snapshoot');
         		});
 
 			});
