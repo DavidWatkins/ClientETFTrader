@@ -12,26 +12,25 @@
     "url": "https://github.com/DavidWatkins/ClientETFTrader"
   },
   "dependencies": {
+    "bcrypt-nodejs": "latest",
+    "body-parser": "~1.0.0",
+    "bson": "*",
+    "connect-flash": "~0.1.1",
+    "cookie-parser": "~1.0.0",
+    "ejs": "~0.8.5",
+    "express": "~4.0.0",
+    "express-json2csv": "*",
+    "express-session": "~1.0.0",
     "lodash": "*",
-    "tiny-lr": "*",
-    "express" : "~4.0.0",
+    "method-override": "~1.0.0",
+    "mongoose": "~3.8.1",
+    "morgan": "~1.0.0",
+    "passport": "~0.1.17",
+    "passport-local": "~0.1.6",
+    "request": "^2.76.0",
     "run-sequence": "*",
     "serve-favicon": "~2.2.1",
-    "express-json2csv": "*",
-    "bson": "*",
-
-    "ejs" : "~0.8.5",
-    "mongoose" : "~3.8.1",
-    "passport" : "~0.1.17",
-    "passport-local" : "~0.1.6",
-    "connect-flash" : "~0.1.1",
-    "bcrypt-nodejs" : "latest",
-
-    "morgan": "~1.0.0",
-    "body-parser": "~1.0.0",
-    "cookie-parser": "~1.0.0",
-    "method-override": "~1.0.0",
-    "express-session": "~1.0.0"
+    "tiny-lr": "*"
   },
   "engines": {
     "node": ">= 0.10",
@@ -40,7 +39,6 @@
   "license": "MIT",
   "private": true,
   "main": "server.js",
-
   "devDependencies": {
     "jshint": "2.*",
     "bower": "*",

@@ -6,7 +6,7 @@ var ExchangeRef = require('./models/exchangeref.js');
 var Order = require('./models/order.js');
 var Trade = require('./models/trade.js');
 
-var INCREMENT = 10;
+var TRADESIZE = 50;
 
 exports.submitOrder = function(req, res, callback) {
 
@@ -31,11 +31,13 @@ exports.submitOrder = function(req, res, callback) {
             throw err;
     });
 
-    for (var i = 0; i < INCREMENT; i++) {
+    var numTrades = data.amount/TRADESIZE;
+
+    for (var i = 0; i < numTrades; i++) {
         var trade = new Trade();
-        trade.local.amount = data.amount/INCREMENT;
+        trade.local.amount = TRADESIZE;
         trade.local.orderId = orderId;
-        trade.local.timestamp = (new Date()) + (i * 1000 * 60);
+        trade.local.fulfillBy = (new Date()) + (i * 1000 * 60);
         trade.local.status = "Unfulfilled";
 
         trade.save(function(err) {
@@ -58,7 +60,6 @@ exports.getAllTrades = function (req, res, callback) {
 };
 
 exports.getTopBidHistory = function(req, res) {
-
     ExchangeRef.find(function(err, data) {
         data = _.pluck(data, 'local');
         data = _.pluck(data, 'top_bid');
