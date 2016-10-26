@@ -15,18 +15,20 @@ exports.submitTrade = function(req, res, callback) {
 
     var data = req.body;
 
-    var collection = db.get('current_trades');
+    var orderId = new Date().getTime(); 
+    var amount = data.amount;
+    var collection = db.get('trades');
 
-    collection.insert(data, function(err, doc) {//Should be sanitizing our input
-        if(err) {
-            res.send("There was a problem adding the information to the database");
-        } else {
-            if (res == null) {
-                callback();
-            }
-            res.send("Success");
+    for (var i = 0; i < 10; i++) { 
+        var trade = {
+            orderId: orderId,
+            amount: amount/10,
+            tradeTime: orderId + (i * 1000 * 60)
         }
-    });
+
+        collection.insert(trade, function(err, doc) {
+        })
+    }
 };
 
 exports.getSubmittedTrades = function(req, res, callback) {

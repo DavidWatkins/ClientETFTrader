@@ -3,16 +3,14 @@
   <strong>Warning!</strong> System is down or unresponsive!
 </div>
 
-<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<!-- <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div> -->
 
 
-<h2 class="sub-header">Place Trade</h2>
-<p>Number available: {{numberAvailable}}</p>
+<h2 class="sub-header">Place Trade Order</h2>
+
 <div class="form-group">
-  <label for="quantity">Quantity</label>
-  <input type="text" id="quantity" class="form-control" placeholder="Quantity" ng-model="quantity">
-  <br>
-  <label for="price">Price</label>
-  <input type="text" id="price" class="form-control" placeholder="Price" ng-model="price">
+  <label for="price">Amount to purchase ($)</label>
+  <input type="integer" id="price" class="form-control" placeholder="Price" ng-model="addOrderValue.amount">
 </div>
-<button type="button" class="btn btn-primary" ng-click="addTrade()">Add Trade</button>
+
+<button type="button" class="btn btn-primary" ng-click="addOrder()">Add Trade Order</button>

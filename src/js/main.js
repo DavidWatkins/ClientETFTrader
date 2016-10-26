@@ -25,10 +25,12 @@
         return route === $location.path();
     };
 
-    $scope.price = 0;
+    $scope.addOrderValue = {
+      amount: 0
+    };
     $scope.numberAvailable = 954;
     $scope.quantity = 0;
-    $scope.warning = true;
+    $scope.warning = false;
 
     function getTrades() {
       // return $http.get('/getSubmittedTrades').then(function(res) {
@@ -73,19 +75,16 @@
 
     getTrades();
 
-    $scope.addTrade = function() {
+    $scope.addOrder = function() {
 
       var new_trade = {
-        "time": new Date(),
-        "quantity":  Math.ceil(Math.random()*50) + 100,
         "order": "SELL",
-        "cost": Math.ceil(Math.random()*50) + 100,
-        "status": Math.random() < 0.3 ? "unfulfilled" : Math.random() < 0.3 ? "fulfilled" : "failed"
+        "amount": $scope.addOrderValue.amount
       };
 
-      $scope.trades.push(new_trade);
+      // $scope.trades.push(new_trade);
 
-      // $http.post('/submitTrade', new_trade);
+      $http.post('/submitTrade', new_trade);
 
     };
 
