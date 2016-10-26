@@ -17,11 +17,15 @@ exports.pollStart = function() {
 
  	setInterval(function () {
 
- 		var current_time = new Date().getTime();
+ 		var current_time = new Date();
 
 		Trade.find({"local.fulfillBy" : { $lt: current_time }, "local.status": "Unfulfilled"}, function(err, data) {
 
 			_.map(data, function(x) {
+
+				console.log(current_time);
+				console.log(x.local.fulfillBy);
+				console.log("-------")
 
 				var request_options = {
 					host: '127.0.0.1',
@@ -45,7 +49,7 @@ exports.pollStart = function() {
 						if (json.qty > 0) {
 							Trade.update({_id: new ObjectId(x._id)}, { $set: 
 								{
-									"local.fulfilledAt": json.timestamp,
+									"local.fulfilledAt": current_time,
 									"local.price": json.avg_price,
 									"local.status": "Fulfilled"
 								}
