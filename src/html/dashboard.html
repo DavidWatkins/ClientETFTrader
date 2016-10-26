@@ -1,15 +1,15 @@
+<!--ng-class="{{banner.bannerSuccess ? 'success alert-success' : 'alert alert-danger'}}"-->
 <h1 class="page-header">Dashboard</h1>
-<div class="alert alert-danger" ng-if="warning">
-  <strong>Warning!</strong> System is down or unresponsive!
+<div ng-if="banner.bannerVisible">
+  {{banner.msg}}
 </div>
 
 <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
 <h2 class="sub-header">Place Trade</h2>
-<p>Number available: {{numberAvailable}}</p>
 <div class="form-group">
-  <label for="price">Amount to Sell (USD)</label>
-  <input type="text" id="price" class="form-control" placeholder="Price" ng-model="price">
+  <label for="price">Amount of shares to sell of ETF</label>
+  <input type="text" id="price" class="form-control" placeholder="Price" ng-model="quantityContainer.quantity">
 </div>
-<button type="button" class="btn btn-primary" ng-click="addTrade()">Add Trade</button>
+<button type="button" class="btn btn-primary" ng-click="submitOrder()">Add Trade</button>

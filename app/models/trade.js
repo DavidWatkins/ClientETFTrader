@@ -7,8 +7,15 @@ var tradeschema = mongoose.Schema({
 
     local            : {
         amount        : Number,
-        orderId       : { type: Date },
-        timestamp     : { type: Date },
+        price         : { type: Number, default: -1 },
+        orderId       : { type: Number },
+        fulfillBy     : { type: Date },
+        fulfilledAt     : { type: Date, default: -1 },
+        orderType     : {
+            type: String,
+            enum: ['BUY', "SELL"],
+            default: 'SELL'
+        },
         status        : {
             type: String,
             enum: ['Unfulfilled', 'Fulfilled', 'Failed']

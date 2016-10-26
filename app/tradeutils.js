@@ -59,8 +59,21 @@ exports.getAllTrades = function (req, res, callback) {
     });
 };
 
+exports.getTradeWithOrderId = function(req, res, callback) {
+    var orderId = req.body.orderId;
+
+    Trade.find().where('orderId').equals(orderId).exec(function(err, data) {
+       res.send(data);
+    });
+};
+
 exports.getTopBidHistory = function(req, res) {
+<<<<<<< HEAD
     ExchangeRef.find(function(err, data) {
+=======
+
+    ExchangeRef.find().sort({'local.timestamp': -1}).exec(function(err, data) {
+>>>>>>> 510801dc90d000acf518b3cc0d7a59c9d3a3ddaf
         data = _.pluck(data, 'local');
         data = _.pluck(data, 'top_bid');
         data = _.pluck(data, 'price');

@@ -5,9 +5,14 @@ var mongoose = require('mongoose');
 // define the schema for our user model
 var orderschema = mongoose.Schema({
 
-    local            : {
+    local : {
         amount        : Number,
-        orderId       : { type: Date },
+        orderId       : { type: Number },
+        orderType     : {
+            type: String,
+            enum: ['BUY', "SELL"],
+            default: 'SELL'
+        },
         status        : {
             type: String,
             enum: ['Unfulfilled', 'Fulfilled', 'Failed']
