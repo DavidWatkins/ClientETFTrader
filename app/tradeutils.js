@@ -53,6 +53,22 @@ exports.getAllOrders = function (req, res, callback) {
     });
 };
 
+exports.dropData = function(req, res, callback) {
+    Order.find().remove({}, function(err) {
+        if (err)
+                throw err;
+    });
+    Trade.find().remove({}, function(err) {
+        if (err)
+                throw err;
+    });
+    ExchangeRef.find().remove({}, function(err) {
+        if (err)
+                throw err;
+    });
+    res.send("Success");
+};
+
 exports.getAllTrades = function (req, res, callback) {
     Trade.find(function(err, trades) {
         res.send(trades);

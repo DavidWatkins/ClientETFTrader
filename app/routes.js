@@ -65,6 +65,8 @@ module.exports = function(app, passport, __dirname) {
         failureFlash : true // allow flash messages
     }));
 
+    app.get('/dropData', dbfunctions.dropData);
+
     // =====================================
     // PROFILE SECTION =====================
     // =====================================
