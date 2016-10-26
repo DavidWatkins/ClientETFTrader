@@ -17,6 +17,31 @@
     .otherwise({redirectTo: '#/dashboard'});
   }]); 
 
+  mainApp.factory('OrderService', ['$http', function($http) {
+     var OrderService = {};
+
+     OrderService.placeOrder = function(order) {
+
+     };
+
+     OrderService.getOrder = function(id) {
+
+     };
+
+     return OrderService;
+   }]);
+
+  mainApp.factory('MarketDataService', ['$http', function($http) {
+     var msgs = [];
+     return function(msg) {
+       msgs.push(msg);
+       if (msgs.length === 3) {
+         win.alert(msgs.join('\n'));
+         msgs = [];
+       }
+     };
+   }]);
+
   mainApp.controller('etfTraderController', ['$scope', '$http', '$location', function($scope, $http, $location) {
 
     $scope.trades = [];
@@ -25,30 +50,16 @@
         return route === $location.path();
     };
 
-    $scope.addOrderValue = {
-      amount: 0
-    };
+    $scope.price = 0;
     $scope.numberAvailable = 954;
     $scope.quantity = 0;
     $scope.warning = false;
-
-    function getTrades() {
-      // return $http.get('/getSubmittedTrades').then(function(res) {
-      //   var i;
-
-      //   for (i = 0; i < res.data.length; i++) {
-      //     $scope.trades.push(res.data[i]);
-      //   }
-      //   return res.data;
-      // });
-    }
 
     $scope.getSeperatedTrades = function() {
       var trades = [];
       for (var i = 0; i <= 100; i++) {
         var trade = {
           "time": new Date(),
-          "quantity":  Math.ceil(Math.random()*50) + 100,
           "order": "SELL",
           "cost": Math.ceil(Math.random()*50) + 100,
           "status": Math.random() < 0.3 ? "unfulfilled" : Math.random() < 0.3 ? "fulfilled" : "failed",
@@ -59,7 +70,6 @@
         for(var j = 0; j < trade.quantity/10; ++j) {
           trade.subtrades.push({
             "time": new Date(),
-            "quantity":  trade.quantity/10,
             "order": "SELL",
             "cost": trade.cost,
             "status": Math.random() < 0.3 ? "unfulfilled" : Math.random() < 0.3 ? "fulfilled" : "failed"
@@ -75,16 +85,18 @@
 
     getTrades();
 
-    $scope.addOrder = function() {
+    $scope.addTrade = function() {
 
       var new_trade = {
+        "time": new Date(),
         "order": "SELL",
-        "amount": $scope.addOrderValue.amount
+        "cost": Math.ceil(Math.random()*50) + 100,
+        "status": Math.random() < 0.3 ? "unfulfilled" : Math.random() < 0.3 ? "fulfilled" : "failed"
       };
 
-      // $scope.trades.push(new_trade);
+      $scope.trades.push(new_trade);
 
-      $http.post('/submitTrade', new_trade);
+      // $http.post('/submitTrade', new_trade);
 
     };
 

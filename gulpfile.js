@@ -106,25 +106,7 @@ gulp.task('minifycss', function () {
 		.on('error', gutil.log);
 });
 
-//Compile HTML code
-gulp.task('processhtml', function() {
-	return gulp.src('src/index.html')
-		.pipe(processhtml({}))
-		.pipe(minifyhtml())
-		.pipe(gulp.dest(paths.dist, {overwrite: true}))
-		.on('error', gutil.log);
-});
-
-
-//Bring over HTML
-gulp.task('html', function(){
-	return gulp.src(paths.dist)
-		.pipe(connect.reload())
-		.on('error', gutil.log);
-});
-
-
-gulp.task('build', ['jshint-web', 'jshint-node', 'copy-vendor', 'copy-assets', 'copy-html', 'uglify', 'minifycss', 'processhtml']);
+gulp.task('build', ['jshint-web', 'jshint-node', 'copy-vendor', 'copy-assets', 'copy-html', 'uglify', 'minifycss']);
 
 gulp.task('develop', function(done) {
     return runSequence('clean', 'build', function() {
@@ -137,15 +119,15 @@ gulp.task('nodemon', ['develop'], function () {
           , ext: 'html js css'
           , ignore: [paths.dist + '*']
           , watch: [paths.src]
-          , tasks: ['develop'] })
+          , tasks: ['develop'] });
  
   return stream
       .on('restart', function () {
-        console.log('restarted!')
+         console.log('restarted!')
       })
       .on('crash', function() {
-        console.error('Application has crashed!\n')
-         stream.emit('restart', 10)  // restart the server in 10 seconds 
+         console.error('Application has crashed!\n');
+         stream.emit('restart', 10) ; // restart the server in 10 seconds
       })
 });
 

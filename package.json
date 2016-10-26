@@ -4,7 +4,7 @@
   "description": "Allowing a user to trade an ETF",
   "readme": "README.md",
   "author": {
-    "name": "David Watkins and David Chen",
+    "name": "David Watkins, David Chen, Brett Jarvey, Soul Joshi",
     "email": "djw2146@columbia.edu"
   },
   "repository": {
@@ -12,12 +12,43 @@
     "url": "https://github.com/DavidWatkins/ClientETFTrader"
   },
   "dependencies": {
+    "lodash": "*",
+    "tiny-lr": "*",
+    "express" : "~4.0.0",
+    "run-sequence": "*",
+    "serve-favicon": "~2.2.1",
+    "express-json2csv": "*",
+    "bson": "*",
+
+    "ejs" : "~0.8.5",
+    "mongoose" : "~3.8.1",
+    "passport" : "~0.1.17",
+    "passport-local" : "~0.1.6",
+    "connect-flash" : "~0.1.1",
+    "bcrypt-nodejs" : "latest",
+
+    "morgan": "~1.0.0",
+    "body-parser": "~1.0.0",
+    "cookie-parser": "~1.0.0",
+    "method-override": "~1.0.0",
+    "express-session": "~1.0.0"
+  },
+  "engines": {
+    "node": ">= 0.10",
+    "npm": ">= 2.1"
+  },
+  "license": "MIT",
+  "private": true,
+  "main": "server.js",
+
+  "devDependencies": {
+    "jshint": "2.*",
     "bower": "*",
     "gulp": "*",
     "gulp-concat": "*",
     "gulp-connect": "*",
     "gulp-download": "*",
-    "jshint": "2.*",
+    "gulp-jasmine": "^2.4.2",
     "gulp-jshint": "*",
     "gulp-minify-css": "*",
     "gulp-minify-html": "*",
@@ -27,26 +58,6 @@
     "gulp-util": "*",
     "gulp-watch": "*",
     "gulp-nodemon": "*",
-    "gulp-clean": "*",
-    "lodash": "*",
-    "tiny-lr": "*",
-    "express": "*",
-    "mongodb": "1.4",
-    "run-sequence": "*",
-    "monk": "*",
-    "serve-favicon": "~2.2.1",
-    "express-json2csv": "*",
-    "body-parser": "*",
-    "bson": "*"
-  },
-  "engines": {
-    "node": ">= 0.10",
-    "npm": ">= 2.1"
-  },
-  "license": "MIT",
-  "private": true,
-  "main": "server.js",
-  "devDependencies": {
-    "gulp-jasmine": "^2.4.2"
+    "gulp-clean": "*"
   }
 }

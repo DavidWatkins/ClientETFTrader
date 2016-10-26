@@ -1,31 +1,30 @@
 #!/bin/env node
 //ETF Trader Node application
 var express = require('express');
-var fs      = require('fs');
 var favicon = require('serve-favicon');
-var bodyParser = require('body-parser');
-var http = require('http');
 
-//DB Code
-var mongo = require('mongodb');
-var monk = require('monk');
+// set up ======================================================================
+// get all the tools we need
+var mongoose = require('mongoose');
+var passport = require('passport');
+var flash    = require('connect-flash');
+var morgan       = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser   = require('body-parser');
+var session      = require('express-session');
 
-// default to a 'localhost' configuration:
-var connection_string = '127.0.0.1:27017/etftrader';
-var db = monk(connection_string);
+var configDB = require('./config/database.js');
 var dbfunctions = require("./js/databasefunctions");
-
 var __dirname = 'dist/';
 
-/**
- *  Define the application.
- */
+// configuration ===============================================================
+mongoose.connect(configDB.url); // connect to our database
 
-var SampleApp = function() {
+require('./config/passport')(passport); // pass passport for configuration
 
-    //  Scope.
+var ETFTraderApp = function() {
+
     var self = this;
-
 
     /*  ================================================================  */
     /*  Helper functions.                                                 */
@@ -39,24 +38,6 @@ var SampleApp = function() {
         self.ipaddress = "127.0.0.1";
         self.port      = process.env.PORT || 3002;
     };
-
-    /**
-     *  Populate the cache.
-     */
-    self.populateCache = function() {
-        if (typeof self.zcache === "undefined") {
-            self.zcache = { 'index.html': '' };
-        }
-
-        //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync(__dirname + 'index.html');
-    };
-
-    /**
-     *  Retrieve entry (content) from cache.
-     *  @param {string} key  Key identifying content to retrieve from cache.
-     */
-    self.cache_get = function(key) { return self.zcache[key]; };
 
     /**
      *  terminator === the termination handler
@@ -92,64 +73,34 @@ var SampleApp = function() {
     /*  ================================================================  */
 
     /**
-     *  Create the routing table entries + handlers for the application.
+     *  Initialize the server (express) and create the routes and register
+     *  the handlers.
      */
-    self.createRoutes = function() {
-        self.getRoutes = { };
-        self.postRoutes = { };
+    self.initializeServer = function() {
+        self.app = express();
 
-        // self.getRoutes['/'] = function(req, res) {
-        //     var db = req.db;
+        // set up our express application
+        self.app.use(morgan('dev')); // log every request to the console
+        self.app.use(cookieParser()); // read cookies (needed for auth)
+        self.app.use(bodyParser()); // get information from html forms
 
-        //     res.setHeader('Content-Type', 'text/html');
-        //     res.send( fs.readFileSync(__dirname + 'index.html') );
-        // };
-        self.getRoutes['/getSubmittedTrades'] = dbfunctions.getSubmittedTrades;
+        self.app.set('view engine', 'ejs'); // set up ejs for templating
 
-        self.postRoutes['/submitTrade'] = dbfunctions.submitTrade;
+        // required for passport
+        self.app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
+        self.app.use(passport.initialize());
+        self.app.use(passport.session()); // persistent login sessions
+        self.app.use(flash()); // use connect-flash for flash messages stored in session
 
-        self.postRoutes['/getExchangeTrades'] = function(req, res) {
-
-        };
-    };
-
-    self.addStaticDirectories = function() {
-        self.app.use('/', express.static(__dirname));
-        self.app.use('/index.html*', express.static(__dirname + 'index.html'));
-
-        self.app.use(favicon(__dirname + '/favicon.ico'));
+        self.app.use(favicon(__dirname + '/favicon.ico')); //Favicon
 
         self.app.use(bodyParser.urlencoded({
             extended: true
         }));
         self.app.use(bodyParser.json());
-    };
 
-
-    /**
-     *  Initialize the server (express) and create the routes and register
-     *  the handlers.
-     */
-    self.initializeServer = function() {
-        self.createRoutes();
-        self.app = express();
-        self.addStaticDirectories();
-
-        // Make our db accessible to our router
-        self.app.use(function(req,res,next){
-            req.db = db;
-            next();
-        });
-
-        //  Add handlers for the app (from the routes).
-        var route;
-        for (route in self.getRoutes) {
-            self.app.get(route, self.getRoutes[route]);
-        }
-        for (route in self.postRoutes) {
-            self.app.post(route, self.postRoutes[route]);
-        }
-
+        // routes ======================================================================
+        require('./app/routes.js')(self.app, passport, __dirname); // load our routes and pass in our app and fully configured passport
     };
 
 
@@ -158,7 +109,6 @@ var SampleApp = function() {
      */
     self.initialize = function() {
         self.setupVariables();
-        self.populateCache();
         self.setupTerminationHandlers();
 
         // Create the express server and routes.
@@ -185,6 +135,6 @@ var SampleApp = function() {
 /**
  *  main():  Main code.
  */
-var zapp = new SampleApp();
+var zapp = new ETFTraderApp();
 zapp.initialize();
 zapp.start();
