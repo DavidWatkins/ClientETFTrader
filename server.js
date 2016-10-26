@@ -106,6 +106,8 @@ var SampleApp = function() {
         // };
         self.getRoutes['/getSubmittedTrades'] = dbfunctions.getSubmittedTrades;
 
+        self.getRoutes['/getETFBidHistory'] = dbfunctions.getTopBidHistory;
+
         self.postRoutes['/submitTrade'] = dbfunctions.submitTrade;
 
         self.postRoutes['/getExchangeTrades'] = function(req, res) {
@@ -149,6 +151,7 @@ var SampleApp = function() {
         for (route in self.postRoutes) {
             self.app.post(route, self.postRoutes[route]);
         }
+        dbfunctions.generateRandomShit();
 
     };
 
