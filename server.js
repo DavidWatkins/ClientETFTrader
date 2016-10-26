@@ -15,7 +15,7 @@ var session      = require('express-session');
 
 var configDB = require('./config/database.js');
 var dbfunctions = require("./app/tradeutils");
-var tradesubmitter = require("./app/tradesubmitter.js")
+var tradesubmitter = require("./app/tradesubmitter.js");
 var __dirname = 'dist/';
 
 // configuration ===============================================================

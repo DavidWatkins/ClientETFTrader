@@ -28,7 +28,7 @@ exports.submitOrder = function(req, res, callback) {
     // save the user
     newOrder.save(function(err) {
         if (err)
-            throw err;
+            console.log(err);
     });
 
     var numTrades = data.amount/TRADESIZE;
@@ -42,7 +42,7 @@ exports.submitOrder = function(req, res, callback) {
 
         trade.save(function(err) {
             if (err)
-                throw err;
+                console.log(err);
         });
     }
 };
@@ -56,15 +56,15 @@ exports.getAllOrders = function (req, res, callback) {
 exports.dropData = function(req, res, callback) {
     Order.find().remove({}, function(err) {
         if (err)
-                throw err;
+                console.log(err);
     });
     Trade.find().remove({}, function(err) {
         if (err)
-                throw err;
+                console.log(err);
     });
     ExchangeRef.find().remove({}, function(err) {
         if (err)
-                throw err;
+                console.log(err);
     });
     res.send("Success");
 };
@@ -119,7 +119,7 @@ exports.generateRandomShit = function() {
 
             scm.save(function(err) {
                 if (err)
-                    throw err;
+                    console.log(err);
             });
         }
     });
