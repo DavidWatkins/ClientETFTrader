@@ -16,6 +16,10 @@
     })
     .otherwise({redirectTo: '#/dashboard'});
   }]); 
+  
+  function getTrades() {
+    
+  }
 
   mainApp.factory('OrderService', ['$http', function($http) {
      var OrderService = {};
