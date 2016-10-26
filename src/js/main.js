@@ -102,8 +102,7 @@
 
     $scope.initializeChart = function(data) {
       console.log(data);
-      data = data.data; 
-      // Create the chart
+      //Create the chart
       var start = new Date();
       $('#container').highcharts({
         chart: {
@@ -155,7 +154,7 @@
         },
 
         title: {
-          text: 'ETF Values over time'
+          text: 'ETF top bids over time'
         },
 
         subtitle: {
@@ -176,10 +175,19 @@
             });
     };
 
-    $http.get("json.json").then($scope.initializeChart);
+      // return $http.get('/getSubmittedTrades').then(function(res) {
+      //   var i;
+
+      //   for (i = 0; i < res.data.length; i++) {
+      //     $scope.trades.push(res.data[i]);
+      //   }
+      //   return res.data;
+      // });
+
+    $http.get('/getETFBidHistory').then($scope.initializeChart);
 
     $scope.$on('$routeChangeStart', function(event) {
-        $http.get("json.json").then($scope.initializeChart);
+        $http.get('/getETFBidHistory').then($scope.initializeChart);
     });
 
   }]);

@@ -1,5 +1,6 @@
 // app/routes.js
 var express = require('express');
+var dbfunctions = require("./tradeutils");
 
 module.exports = function(app, passport, __dirname) {
 
@@ -43,13 +44,13 @@ module.exports = function(app, passport, __dirname) {
     // =====================================
     // EXCHANGE FUNCTIONS ==================
     // =====================================
-    app.post('/submitOrder', function (req, res) {
-        //TODO me
-    });
+    app.post('/submitOrder', dbfunctions.submitOrder);
 
     app.post('/getExchangeTrades', function (req, res) {
        //TODO me
     });
+
+    app.get('/getETFBidHistory', dbfunctions.getTopBidHistory);
 
     //LEGACY
     app.use('/', express.static(__dirname));
@@ -86,6 +87,11 @@ module.exports = function(app, passport, __dirname) {
         failureRedirect : '/login', // redirect back to the signup page if there is an error
         failureFlash : true // allow flash messages
     }));
+
+    // DEFAULT
+    app.get('/', function(req, res){
+        res.redirect('/dashboard');
+    });
 };
 
 // route middleware to make sure a user is logged in

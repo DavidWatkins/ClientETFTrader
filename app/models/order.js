@@ -8,7 +8,10 @@ var orderschema = mongoose.Schema({
     local            : {
         amount        : Number,
         orderId       : { type: Date },
-        status        : String
+        status        : {
+            type: String,
+            enum: ['Unfulfilled', 'Fulfilled', 'Failed']
+        }
     }
 
 });

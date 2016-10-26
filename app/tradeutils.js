@@ -1,10 +1,14 @@
 "use strict";
 
-var Order = require('models/order.js');
-var Trade = require('models/trade.js');
-var ExchangeRef = require('models/exchangeref.js');
+var _ = require('underscore');
 
-exports.submitTrade = function(req, res, callback) {
+var ExchangeRef = require('./models/exchangeref.js');
+var Order = require('./models/order.js');
+var Trade = require('./models/trade.js');
+
+var INCREMENT = 10;
+
+exports.submitOrder = function(req, res, callback) {
 
     if(req.body == null) {
         res.send("Invalid Query");
@@ -13,35 +17,85 @@ exports.submitTrade = function(req, res, callback) {
 
     var data = req.body;
 
-    var collection = db.get('current_trades');
+    var orderId = new Date().getTime();
 
-    collection.insert(data, function(err, doc) {//Should be sanitizing our input
-        if(err) {
-            res.send("There was a problem adding the information to the database");
-        } else {
-            if (res == null) {
-                callback();
-            }
-            res.send("Success");
-        }
+    var newOrder = new Order();
+
+    newOrder.local.amount = data.amount;
+    newOrder.local.orderId = orderId;
+    newOrder.local.status = "Unfulfilled";
+
+    // save the user
+    newOrder.save(function(err) {
+        if (err)
+            throw err;
+    });
+
+    for (var i = 0; i < INCREMENT; i++) {
+        var trade = new Trade();
+        trade.local.amount = data.amount/INCREMENT;
+        trade.local.orderId = orderId;
+        trade.local.timestamp = (new Date()) + (i * 1000 * 60);
+        trade.local.status = "Unfulfilled";
+
+        trade.save(function(err) {
+            if (err)
+                throw err;
+        });
+    }
+};
+
+exports.getAllOrders = function (req, res, callback) {
+    Order.find(function(err, orders) {
+        res.send(orders);
     });
 };
 
-exports.getSubmittedTrades = function(req, res, callback) {
-    var collection = db.get('current_trades');
-
-    collection.find({},{},function(e,docs){
-
-        if(docs == null) {
-            res.send("No data in database!");
-            return;
-        }
-
-        if (res == null) {
-            callback();
-        }
-
-        //SANITIZE
-        res.send(docs);
+exports.getAllTrades = function (req, res, callback) {
+    Trade.find(function(err, trades) {
+        res.send(trades);
     });
 };
+
+exports.getTopBidHistory = function(req, res) {
+
+    ExchangeRef.find(function(err, data) {
+        data = _.pluck(data, 'top_bid');
+        data = _.pluck(data, 'price');
+        res.send(data);
+    });
+
+};
+
+exports.generateRandomShit = function() {
+
+    ExchangeRef.remove({}, function(err,removed) {
+
+        var timestamp = new Date().getTime();
+        var askPrice = 100.00;
+        var bidPrice = 100.00;
+
+        for(var i=0;i<500;i++) {
+            askPrice += ((Math.random())-.5);
+
+            var scm = new ExchangeRef();
+            scm.local.top_ask = {
+                "price": askPrice,
+                "size":(Math.floor(Math.random()*100)+1)
+            };
+            scm.local.timestamp = timestamp - (5 * i * 1000);
+            scm.local.top_bid = {
+                "price": askPrice - Math.random(),
+                "size":(Math.floor(Math.random()*100)+1)
+            };
+            scm.local.id = null;
+
+            scm.save(function(err) {
+                if (err)
+                    throw err;
+            });
+        }
+    });
+
+};
+
