@@ -35,7 +35,7 @@ exports.submitOrder = function(req, res, callback) {
         var trade = new Trade();
         trade.local.amount = data.amount/INCREMENT;
         trade.local.orderId = orderId;
-        trade.local.timestamp = (new Date()) + (i * 1000 * 60);
+        trade.local.fulfillBy = (new Date()) + (i * 1000 * 60);
         trade.local.status = "Unfulfilled";
 
         trade.save(function(err) {
@@ -57,9 +57,17 @@ exports.getAllTrades = function (req, res, callback) {
     });
 };
 
+exports.getTradeWithOrderId = function(req, res, callback) {
+    var orderId = req.body.orderId;
+
+    Trade.find().where('orderId').equals(orderId).exec(function(err, data) {
+       res.send(data);
+    });
+};
+
 exports.getTopBidHistory = function(req, res) {
 
-    ExchangeRef.find(function(err, data) {
+    ExchangeRef.find().sort({'local.timestamp': -1}).exec(function(err, data) {
         data = _.pluck(data, 'local');
         data = _.pluck(data, 'top_bid');
         data = _.pluck(data, 'price');

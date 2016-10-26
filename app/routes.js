@@ -40,6 +40,9 @@ module.exports = function(app, passport, __dirname) {
 
     });
 
+    app.get('/getAllOrders', dbfunctions.getAllOrders);
+    app.get('/getAllTrades', dbfunctions.getAllTrades);
+
 
     // =====================================
     // EXCHANGE FUNCTIONS ==================

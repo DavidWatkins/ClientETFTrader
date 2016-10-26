@@ -5,107 +5,117 @@
 
   mainApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider
-    .when("/", {
-      templateUrl : "dashboard.html"
-    })
-    .when("/dashboard", {
-      templateUrl : "dashboard.html"
-    })
-    .when("/pastTrades", {
-      templateUrl : "pastTrades.html"
-    })
-    .otherwise({redirectTo: '#/dashboard'});
-  }]); 
-  
-  function getTrades() {
-    
-  }
+        .when("/", {
+          templateUrl : "dashboard.html"
+        })
+        .when("/dashboard", {
+          templateUrl : "dashboard.html"
+        })
+        .when("/pastTrades", {
+          templateUrl : "pastTrades.html"
+        })
+        .otherwise({redirectTo: '#/dashboard'});
+  }]);
 
-  mainApp.factory('OrderService', ['$http', function($http) {
-     var OrderService = {};
+  mainApp.factory('OrderService', ['$http', '$q', function($http, $q) {
+    var OrderService = {};
 
-     OrderService.placeOrder = function(order) {
+    OrderService.placeOrder = function(amount) {
+      return $http.post('/submitOrder', {amount: amount});
+    };
 
-     };
+    OrderService.getOrder = function(id) {
 
-     OrderService.getOrder = function(id) {
+    };
 
-     };
+    OrderService.getAllOrders = function() {
+      return $http.get('/getAllOrders').then(function(data){
+        return data;
+      });
+    };
 
-     return OrderService;
-   }]);
+    OrderService.getAllTrades = function () {
+      return $http.get('/getAllTrades').then(function(data){
+        return data;
+      });
+    };
+
+    return OrderService;
+  }]);
 
   mainApp.factory('MarketDataService', ['$http', function($http) {
-     var msgs = [];
-     return function(msg) {
-       msgs.push(msg);
-       if (msgs.length === 3) {
-         win.alert(msgs.join('\n'));
-         msgs = [];
-       }
-     };
-   }]);
+    var MarketDataService = {};
 
-  mainApp.controller('etfTraderController', ['$scope', '$http', '$location', function($scope, $http, $location) {
+    MarketDataService.getAllMarketData = function () {
+
+    };
+
+    return MarketDataService;
+  }]);
+
+  mainApp.controller('etfTraderController', ['$scope', '$http', '$location', 'OrderService', 'MarketDataService', function($scope, $http, $location, OrderService, MarketDataService) {
 
     $scope.trades = [];
 
     $scope.isActive = function(route) {
-        return route === $location.path();
+      return route === $location.path();
     };
 
-    $scope.price = 0;
-    $scope.numberAvailable = 954;
-    $scope.quantity = 0;
-    $scope.warning = false;
+    $scope.quantityContainer = {
+      quantity : 0
+    };
 
-    $scope.getSeperatedTrades = function() {
-      var trades = [];
-      for (var i = 0; i <= 100; i++) {
-        var trade = {
-          "time": new Date(),
-          "order": "SELL",
-          "cost": Math.ceil(Math.random()*50) + 100,
-          "status": Math.random() < 0.3 ? "unfulfilled" : Math.random() < 0.3 ? "fulfilled" : "failed",
-          "subtrades": [],
-          "id": i
-        };
+    $scope.banner = {
+      msg: "",
+      bannerVisible: true,
+      bannerSuccess: false
+    };
+    $scope.bannerVisible = false;
+    $scope.msg = "";
 
-        for(var j = 0; j < trade.quantity/10; ++j) {
-          trade.subtrades.push({
-            "time": new Date(),
-            "order": "SELL",
-            "cost": trade.cost,
-            "status": Math.random() < 0.3 ? "unfulfilled" : Math.random() < 0.3 ? "fulfilled" : "failed"
-          });
+    $scope.getOrderData = function() {
+      OrderService.getAllOrders().then(function (orders) {
+        $scope.orders = orders.data;
+        return OrderService.getAllTrades();
+      }).then(function (trades) {
+        var orders = $scope.orders;
+        var trades = trades.data;
+
+        if(orders !== undefined && trades !== undefined) {
+
+          for (var orderKey in orders) {
+            var order = orders[orderKey];
+            order.trades = [];
+            for (var tradeKey in trades) {
+              var trade = trades[tradeKey];
+
+              if (trade.local.orderId == order.local.orderId) {
+                order.trades.push(trade);
+              }
+            }
+          }
         }
 
-         trades.push(trade);
-      }
-      return trades;
+        $scope.orderData = orders;
+      });
     };
 
-    $scope.separatedTrades = $scope.getSeperatedTrades();
+    $scope.getOrderData();
 
-    getTrades();
+    $scope.submitOrder = function () {
+      OrderService.placeOrder($scope.quantityContainer.quantity).then(function(data, err) {
+        console.log($scope.banner);
 
-    $scope.addTrade = function() {
+        if(err) $scope.banner.msg = "Not successful";
+        else $scope.banner.msg = "Data was successful";
 
-      var new_trade = {
-        "time": new Date(),
-        "order": "SELL",
-        "cost": Math.ceil(Math.random()*50) + 100,
-        "status": Math.random() < 0.3 ? "unfulfilled" : Math.random() < 0.3 ? "fulfilled" : "failed"
-      };
-
-      $scope.trades.push(new_trade);
-
-      // $http.post('/submitTrade', new_trade);
-
+        $scope.banner.bannerSuccess = true;
+        $scope.banner.bannerVisible = true;
+      });
     };
 
     $scope.initializeChart = function(data) {
-      console.log(data);
+      // console.log(data);
       //Create the chart
       var start = new Date();
       $('#container').highcharts({
@@ -162,36 +172,28 @@
         },
 
         subtitle: {
-                text: 'Built chart in ...' // dummy text to reserve space for dynamic subtitle
-              },
+          text: 'Built chart in ...' // dummy text to reserve space for dynamic subtitle
+        },
 
-              series: [{
-                name: 'USD',
-                data: data.data,
-                pointStart: data.pointStart,
-                pointInterval: data.pointInterval,
-                tooltip: {
-                  valueDecimals: 1,
-                  valueSuffix: '$'
-                }
-              }]
+        series: [{
+          name: 'USD',
+          data: data.data,
+          pointStart: data.pointStart,
+          pointInterval: data.pointInterval,
+          tooltip: {
+            valueDecimals: 1,
+            valueSuffix: '$'
+          }
+        }]
 
-            });
+      });
     };
-
-      // return $http.get('/getSubmittedTrades').then(function(res) {
-      //   var i;
-
-      //   for (i = 0; i < res.data.length; i++) {
-      //     $scope.trades.push(res.data[i]);
-      //   }
-      //   return res.data;
-      // });
 
     $http.get('/getETFBidHistory').then($scope.initializeChart);
 
     $scope.$on('$routeChangeStart', function(event) {
-        $http.get('/getETFBidHistory').then($scope.initializeChart);
+      $scope.getOrderData();
+      $http.get('/getETFBidHistory').then($scope.initializeChart);
     });
 
   }]);

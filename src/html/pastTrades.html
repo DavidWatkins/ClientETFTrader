@@ -1,38 +1,42 @@
-<h1 class="page-header">Previous Trades</h1>
+<h1 class="page-header">Previous Orders</h1>
 <div class="table-responsive">
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>time</th>
-        <th>order</th>
-        <th>cost</th>
-        <th>status</th>
+        <th>Order ID</th>
+        <th>Amount</th>
+        <th>Order Type</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody>
-        <tr data-toggle="collapse" data-target="#demo{{trade.id}}" class="accordion-toggle" ng-repeat-start="trade in separatedTrades">
-          <td>{{trade.time}}</td>
-          <td>{{trade.order}}</td>
-          <td>{{trade.cost}}</td>
-          <td ng-class="trade.status === 'unfulfilled' ? 'info' : trade.status === 'fulfilled' ? 'success' : 'danger'">{{trade.status}}</td>
+        <tr data-toggle="collapse" data-target="#demo{{order.local.orderId}}" class="accordion-toggle" ng-repeat-start="order in orderData">
+          <td>{{order.local.orderId}}</td>
+          <td>{{order.local.amount}}</td>
+          <td>{{order.local.orderType}}</td>
+          <td ng-class="order.local.status === 'Unfulfilled' ? 'info' : order.local.status === 'Fulfilled' ? 'success' : 'danger'">{{order.local.status}}</td>
         </tr>
         <tr ng-repeat-end>
           <td colspan="12" class="hiddenRow">
-            <div class="accordian-body collapse" id="demo{{trade.id}}"> 
+            <div class="accordian-body collapse" id="demo{{order.local.orderId}}">
               <h3 class='sub-header'>Divided Trades</h3>
               <table class="table table-striped">
                 <thead>
-                  <th>time</th>
-                  <th>order</th>
-                  <th>cost</th>
-                  <th>status</th>
+                  <th>Amount</th>
+                  <th>Price</th>
+                  <th>Fulfill By</th>
+                  <th>Fulfilled At</th>
+                  <th>Order Type</th>
+                  <th>Status</th>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="subtrade in trade.subtrades">
-                    <td>{{trade.time}}</td>
-                    <td>{{trade.order}}</td>
-                    <td>{{trade.cost}}</td>
-                    <td ng-class="trade.status === 'unfulfilled' ? 'info' : trade.status === 'fulfilled' ? 'success' : 'danger'">{{trade.status}}</td>
+                  <tr ng-repeat="trade in order.trades">
+                    <td>{{trade.local.amount}}</td>
+                    <td>{{trade.local.price}}</td>
+                    <td>{{trade.local.fulfillBy}}</td>
+                    <td>{{trade.local.fulfilledAt}}</td>
+                    <td>{{trade.local.orderType}}</td>
+                    <td ng-class="trade.local.status === 'Unfulfilled' ? 'info' : trade.local.status === 'Fulfilled' ? 'success' : 'danger'">{{trade.local.status}}</td>
                   </tr>
                 </tbody>
               </table>
