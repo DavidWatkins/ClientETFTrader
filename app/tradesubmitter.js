@@ -85,11 +85,11 @@ exports.pollStart = function() {
 				snapshot.local = json;
 				snapshot.save(function(err) {
             		if (err)
-                		throw err;
+                		console.log(err);
         		});
 
 			});
 		}).end();
 
 	}, 5000);
-}
+};

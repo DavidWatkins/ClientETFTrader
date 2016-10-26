@@ -79,7 +79,11 @@
         return OrderService.getAllTrades();
       }).then(function (trades) {
         var orders = $scope.orders;
-        var trades = trades.data;
+        trades = trades.data;
+        $scope.trades = trades;
+        $scope.trades.sort(function(a, b) {
+          return a.local.timestamp - b.local.timestamp;
+        });
 
         if(orders !== undefined && trades !== undefined) {
 
@@ -88,7 +92,14 @@
             order.trades = [];
             for (var tradeKey in trades) {
               var trade = trades[tradeKey];
+              trade.local.fulfillBy = new Date(trade.local.fulfillBy);
 
+              trade.local.fulfilledAt = new Date(trade.local.fulfilledAt);
+              if(trade.local.fulfilledAt.getYear() > 2015)
+                trade.local.fulfilledAt = trade.local.fulfilledAt.getDate()  + "-" + (trade.local.fulfilledAt.getMonth()+1) + "-" + trade.local.fulfilledAt.getFullYear() +
+                  " " + trade.local.fulfilledAt.getHours() + ":" + trade.local.fulfilledAt.getMinutes();
+              else
+                trade.local.fulfilledAt = "Unfulfilled";
               if (trade.local.orderId == order.local.orderId) {
                 order.trades.push(trade);
               }

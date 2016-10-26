@@ -6,6 +6,7 @@
 
 <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
+<hr>
 
 <h2 class="sub-header">Place Trade</h2>
 <div class="form-group">
@@ -13,3 +14,32 @@
   <input type="text" id="price" class="form-control" placeholder="Price" ng-model="quantityContainer.quantity">
 </div>
 <button type="button" class="btn btn-primary" ng-click="submitOrder()">Add Trade</button>
+
+<hr>
+
+<h2 class="sub-header">5 Most Recent Trades</h2>
+<td colspan="12">
+  <table class="table table-striped">
+    <thead>
+    <th>Order ID</th>
+    <th>Amount</th>
+    <th>Price</th>
+    <th>Fulfill By</th>
+    <th>Fulfilled At</th>
+    <th>Order Type</th>
+    <th>Status</th>
+    </thead>
+    <tbody>
+    <tr ng-repeat="trade in trades|limitTo:5">
+      <td>{{trade.local.orderId}}</td>
+      <td>{{trade.local.amount}}</td>
+      <td>{{trade.local.price == -1 ? "Unfulfilled" : trade.local.price}}</td>
+      <td>{{trade.local.fulfillBy.getDate()  + "-" + (trade.local.fulfillBy.getMonth()+1) + "-" + trade.local.fulfillBy.getFullYear() +
+        " " + trade.local.fulfillBy.getHours() + ":" + trade.local.fulfillBy.getMinutes()}}</td>
+      <td>{{trade.local.fulfilledAt}}</td>
+      <td>{{trade.local.orderType}}</td>
+      <td ng-class="trade.local.status === 'Unfulfilled' ? 'info' : trade.local.status === 'Fulfilled' ? 'success' : 'danger'">{{trade.local.status}}</td>
+    </tr>
+    </tbody>
+  </table>
+</td>
