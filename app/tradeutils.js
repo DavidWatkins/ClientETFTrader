@@ -11,7 +11,8 @@ var TRADESIZE = 50;
 
 //8 hour market
 //from 12:30am - 8:00am
-exports.submitOrderSimulation = function(req, res, callback) {
+//also simulates polling and completion of trades
+exports.submitOrder = function(req, res, callback) {
 
     if(req.body == null) {
         res.send("Invalid Query");
@@ -66,61 +67,117 @@ exports.submitOrderSimulation = function(req, res, callback) {
             var numTrades = data.amount/TRADESIZE;
             var separation = timeLeft/numTrades;
 
+            var tradeArray = [];
             for (var i = 0; i < numTrades; i++) {
-                var trade = new Trade();
-                trade.local.amount = TRADESIZE;
-                trade.local.orderId = orderId;
-                trade.local.fulfillBy = timestampDate.getTime() + (i * separation)
-                trade.local.status = "Unfulfilled";
+                var tradeFulfillBy = timestampDate.getTime() + (i * separation);
+                var trade = {
+                    local: {
+                        amount: TRADESIZE,
+                        orderId: orderId,
+                        fulfillBy: new Date(tradeFulfillBy),
+                        status: "Unfulfilled"
+                    }
+                }
 
-                trade.save(function(err) {
-                    if (err)
-                        console.log(err);
-                });
+                tradeArray.push(trade);
             }
+
+            Trade.collection.insert(tradeArray, function(err, docs){
+                // tickServer();
+            })
         });
         res.send("Success");
     }).end();
 };
 
-exports.submitOrder = function(req, res, callback) {
+//for non-realtime simulation
+var tickServer = function() {
 
-    if(req.body == null) {
-        res.send("Invalid Query");
-        return;
-    }
+    var request_options = {
+        host: '127.0.0.1',
+        port: 8080,
+        path: '/query?id=1',
+        method: 'GET'
+    };
 
-    var data = req.body;
+    //get current time from server
+    http.request(request_options, function(response) {
+        var content = "";
 
-    var orderId = new Date().getTime();
-
-    var newOrder = new Order();
-
-    newOrder.local.amount = data.amount;
-    newOrder.local.orderId = orderId;
-    newOrder.local.status = "Unfulfilled";
-
-    // save the user
-    newOrder.save(function(err) {
-        if (err)
-            console.log(err);
-    });
-
-    var numTrades = data.amount/TRADESIZE;
-
-    for (var i = 0; i < numTrades; i++) {
-        var trade = new Trade();
-        trade.local.amount = TRADESIZE;
-        trade.local.orderId = orderId;
-        trade.local.fulfillBy = (new Date().getTime()) + (i * 1000 * 60);
-        trade.local.status = "Unfulfilled";
-
-        trade.save(function(err) {
-            if (err)
-                console.log(err);
+        // Handle data chunks
+        response.on('data', function(chunk) {
+            content += chunk;
         });
-    }
-};
+
+        // Once we're done streaming the response, parse it as json.
+        response.on('end', function() {
+            try {
+                var json = JSON.parse(content);
+            } catch (e) {
+                tickServer();
+                return;
+            }
+
+
+            var current_time = new Date(json.timestamp);
+
+            Trade.findOne({"local.status": "Unfulfilled"}, function(err, data) {
+                if (data) {
+                    executeTrades(current_time);
+                }
+            })
+        });
+    }).end();
+}
+
+var executeTrades = function(current_time) {
+    Trade.find({"local.fulfillBy" : { $lt: current_time }, "local.status": "Unfulfilled"}, function(err, data) {
+
+        if (!data.length) {
+            tickServer();
+        } else {
+            var promises = _.map(data, function(x) {
+
+                console.log(x.local.fulfillBy);
+                console.log("-------")
+
+                var request_options = {
+                    host: '127.0.0.1',
+                    port: 8080,
+                    path: '/order?id=2&side=sell&qty=50&price=0.0',
+                    method: 'GET'
+                };
+
+                return http.request(request_options, function(response) {
+
+                    var content = "";
+
+                    // Handle data chunks
+                    response.on('data', function(chunk) {
+                        content += chunk;
+                    });
+
+                    // Once we're done streaming the response, parse it as json.
+                    response.on('end', function() {
+                        var json = JSON.parse(content);
+                        if (json.qty > 0) {
+                            Trade.update({_id: new ObjectId(x._id)}, { $set: 
+                                {
+                                    "local.fulfilledAt": current_time,
+                                    "local.price": json.avg_price,
+                                    "local.status": "Fulfilled"
+                                }
+                            }, function() {
+                            })
+                        }
+                    });
+                }).end();
+            });
+
+            Promise.all(promises).then(tickServer());
+        }
+    }); 
+}
 
 exports.getAllOrders = function (req, res, callback) {
     Order.find(function(err, orders) {

@@ -47,7 +47,7 @@ module.exports = function(app, passport, __dirname) {
     // =====================================
     // EXCHANGE FUNCTIONS ==================
     // =====================================
-    app.post('/submitOrder', dbfunctions.submitOrderSimulation);
+    app.post('/submitOrder', dbfunctions.submitOrder);
 
     app.post('/getExchangeTrades', function (req, res) {
        //TODO me
