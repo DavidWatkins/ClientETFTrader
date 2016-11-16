@@ -12,6 +12,17 @@ var ExchangeRef = require('./models/exchangeref.js');
 var Order = require('./models/order.js');
 var Trade = require('./models/trade.js');
 
+//for use with the simulated stock exchange 
+//i.e. time does not flow according to system clock
+exports.pollSimulation = function() {
+	console.log("Polling has started!");
+
+	setInterval(function() {
+
+	}, 5000);
+}
+
+//live polling, not useful at the moment, basically legacy code at this point
 exports.pollStart = function() {
 	console.log("Polling has started!");
 

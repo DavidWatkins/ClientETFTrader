@@ -129,7 +129,7 @@ var ETFTraderApp = function() {
             console.log('%s: Node server started on %s:%d ...',
                         Date(Date.now() ), self.ipaddress, self.port);
         });
-        tradesubmitter.pollStart();
+        // tradesubmitter.pollStart();
     };
 
 };
