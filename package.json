@@ -40,9 +40,10 @@
   "private": true,
   "main": "server.js",
   "devDependencies": {
-    "jshint": "2.*",
     "bower": "*",
+    "del": "^2.2.2",
     "gulp": "*",
+    "gulp-clean": "*",
     "gulp-concat": "*",
     "gulp-connect": "*",
     "gulp-download": "*",
@@ -50,12 +51,14 @@
     "gulp-jshint": "*",
     "gulp-minify-css": "*",
     "gulp-minify-html": "*",
+    "gulp-nodemon": "*",
     "gulp-processhtml": "*",
     "gulp-rename": "*",
     "gulp-uglify": "*",
     "gulp-util": "*",
     "gulp-watch": "*",
-    "gulp-nodemon": "*",
-    "gulp-clean": "*"
+    "jshint": "2.*",
+    "mockgoose": "^6.0.8",
+    "underscore": "^1.8.3"
   }
 }
