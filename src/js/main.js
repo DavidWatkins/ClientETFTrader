@@ -1,7 +1,12 @@
 (function () {
   'use strict';
 
-  var mainApp = angular.module("mainApp", ["ngRoute"]);
+  var mainApp = angular.module("mainApp", ["ngRoute", "bsLoadingOverlay", "ui.bootstrap"])
+      .run(function(bsLoadingOverlayService) {
+        bsLoadingOverlayService.setGlobalConfig({
+          templateUrl: 'loading-overlay-template.html'
+        });
+      });
 
   mainApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider
@@ -13,6 +18,12 @@
         })
         .when("/pastTrades", {
           templateUrl : "pastTrades.html"
+        })
+        .when("/analytics", {
+          templateUrl: "analysis.html"
+        })
+        .when("/exportToCSV", {
+          templateUrl: "exportToCSV.html"
         })
         .otherwise({redirectTo: '#/dashboard'});
   }]);
@@ -53,159 +64,289 @@
     return MarketDataService;
   }]);
 
-  mainApp.controller('etfTraderController', ['$scope', '$http', '$location', 'OrderService', 'MarketDataService', function($scope, $http, $location, OrderService, MarketDataService) {
+  function pad(n, width, z) {
+    z = z || '0';
+    n = n + '';
+    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+  }
 
-    $scope.trades = [];
+  mainApp.controller('etfTraderController', ['$scope', '$http', '$location', '$interval', '$uibModal', 'OrderService', 'MarketDataService', 'bsLoadingOverlayService',
+    function($scope, $http, $location, $interval, $uibModal, OrderService, MarketDataService, bsLoadingOverlayService) {
 
-    $scope.isActive = function(route) {
-      return route === $location.path();
-    };
+      $scope.trades = [];
 
-    $scope.quantityContainer = {
-      quantity : 0
-    };
+      $scope.isActive = function(route) {
+        return route === $location.path();
+      };
 
-    $scope.banner = {
-      msg: "",
-      bannerVisible: true,
-      bannerSuccess: false
-    };
-    $scope.bannerVisible = false;
-    $scope.msg = "";
+      $scope.quantityContainer = {
+        quantity : 0
+      };
 
-    $scope.getOrderData = function() {
-      OrderService.getAllOrders().then(function (orders) {
-        $scope.orders = orders.data;
-        return OrderService.getAllTrades();
-      }).then(function (trades) {
-        var orders = $scope.orders;
-        trades = trades.data;
-        $scope.trades = trades;
-        $scope.trades.sort(function(a, b) {
-          return a.local.timestamp - b.local.timestamp;
-        });
+      $scope.banner = {
+        msg: "",
+        bannerVisible: true,
+        bannerSuccess: false
+      };
+      $scope.bannerVisible = false;
+      $scope.msg = "";
 
-        if(orders !== undefined && trades !== undefined) {
+      $scope.getOrderData = function() {
+        OrderService.getAllOrders().then(function (orders) {
+          $scope.orders = orders.data;
+          return OrderService.getAllTrades();
+        }).then(function (trades) {
+          var orders = $scope.orders;
+          trades = trades.data;
+          $scope.trades = trades;
+          $scope.trades.sort(function(a, b) {
+            console.log(a);
+            console.log(b);
+            return new Date(a.local.timestamp) <= new Date(b.local.timestamp);
+          });
 
-          for (var orderKey in orders) {
-            var order = orders[orderKey];
-            order.trades = [];
-            for (var tradeKey in trades) {
-              var trade = trades[tradeKey];
-              trade.local.fulfillBy = new Date(trade.local.fulfillBy);
+          if(orders !== undefined && trades !== undefined) {
 
-              trade.local.fulfilledAt = new Date(trade.local.fulfilledAt);
-              if(trade.local.fulfilledAt.getYear() > 2015)
-                trade.local.fulfilledAt = trade.local.fulfilledAt.getDate()  + "-" + (trade.local.fulfilledAt.getMonth()+1) + "-" + trade.local.fulfilledAt.getFullYear() +
-                  " " + trade.local.fulfilledAt.getHours() + ":" + trade.local.fulfilledAt.getMinutes();
-              else
-                trade.local.fulfilledAt = "Unfulfilled";
-              if (trade.local.orderId == order.local.orderId) {
-                order.trades.push(trade);
+            for (var orderKey in orders) {
+              var order = orders[orderKey];
+              order.trades = [];
+              for (var tradeKey in trades) {
+                var trade = trades[tradeKey];
+                trade.local.fulfillBy = new Date(trade.local.fulfillBy);
+
+                trade.local.fulfilledAt = new Date(trade.local.fulfilledAt);
+                if(trade.local.fulfilledAt.getYear() > 2015)
+                  trade.local.fulfilledAt = $.datepicker.formatDate("M d, yy", trade.local.fulfilledAt) + " " + local.getHours() + ":" + pad(local.getMinutes(), 2) + ":" + pad(local.getSeconds(), 2);
+                // trade.local.fulfilledAt = trade.local.fulfilledAt.getDate()  + "-" + (trade.local.fulfilledAt.getMonth()+1) + "-" + trade.local.fulfilledAt.getFullYear() +
+                //   " " + trade.local.fulfilledAt.getHours() + ":" + trade.local.fulfilledAt.getMinutes();
+                else
+                  trade.local.fulfilledAt = "Unfulfilled";
+                if (trade.local.orderId == order.local.orderId) {
+                  order.trades.push(trade);
+                }
               }
             }
           }
+
+          $scope.orderData = orders;
+        });
+      };
+
+      $scope.getOrderData();
+
+      $scope.showOverlay = function() {
+        bsLoadingOverlayService.start();
+      };
+
+      $scope.hideOverlay = function() {
+        bsLoadingOverlayService.stop();
+      };
+
+      $scope.canPostTrade = true;
+
+      $scope.submitOrder = function () {
+        if($scope.canPostTrade) {
+          $scope.showOverlay();
+          $scope.canPostTrade = false;
+          OrderService.placeOrder($scope.quantityContainer.quantity).then(function(data, err) {
+            console.log($scope.banner);
+
+            if(err) $scope.banner.msg = "Trade was not posted";
+            else $scope.banner.msg = "Trade Successfully Posted";
+
+            $scope.banner.bannerSuccess = true;
+            $scope.banner.bannerVisible = true;
+
+            $scope.hideOverlay();
+            $scope.canPostTrade = true;
+          });
         }
+      };
 
-        $scope.orderData = orders;
-      });
-    };
+      // $scope.initializeChart = function(data) {
+      //   console.log(data.data);
+      //   //Create the chart
+      //   var start = new Date();
+      //   var chart = $('#container').highcharts({
+      //     chart: {
+      //       events: {
+      //         load: function () {
+      //           $scope.chart = this;
+      //           if (!window.isComparing) {
+      //             this.setTitle(null, {
+      //               text: 'Built chart in ' + (new Date() - start) + 'ms'
+      //             });
+      //           }
+      //         }
+      //       },
+      //       zoomType: 'x',
+      //       type: 'spline'
+      //     },
+      //
+      //     yAxis: {
+      //       title: {
+      //         text: 'USD ($)'
+      //       }
+      //     },
+      //
+      //     title: {
+      //       text: 'ETF top bids over time'
+      //     },
+      //
+      //     subtitle: {
+      //       text: 'Built chart in ...' // dummy text to reserve space for dynamic subtitle
+      //     },
+      //
+      //     tooltip: {
+      //       formatter: function () {
+      //         return '<b>' + this.series.name + '</b><br/>' +
+      //             Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+      //             Highcharts.numberFormat(this.y, 2);
+      //       }
+      //     },
+      //
+      //     series: [{
+      //       name: 'USD',
+      //       data: data.data,
+      //       tooltip: {
+      //         valueDecimals: 1,
+      //         valueSuffix: '$'
+      //       }
+      //     }]
+      //
+      //   });
+      //
+      //   console.log(chart);
+      //   $scope.chart = chart;
+      // };
 
-    $scope.getOrderData();
-
-    $scope.submitOrder = function () {
-      OrderService.placeOrder($scope.quantityContainer.quantity).then(function(data, err) {
-        console.log($scope.banner);
-
-        if(err) $scope.banner.msg = "Not successful";
-        else $scope.banner.msg = "Data was successful";
-
-        $scope.banner.bannerSuccess = true;
-        $scope.banner.bannerVisible = true;
-      });
-    };
-
-    $scope.initializeChart = function(data) {
-      // console.log(data);
-      //Create the chart
-      var start = new Date();
-      $('#container').highcharts({
-        chart: {
-          events: {
-            load: function () {
-              if (!window.isComparing) {
-                this.setTitle(null, {
-                  text: 'Built chart in ' + (new Date() - start) + 'ms'
-                });
+      $scope.initializeChart = function(data) {
+        // console.log(data);
+        //Create the chart
+        var start = new Date();
+        $('#container').highcharts({
+          chart: {
+            events: {
+              load: function () {
+                if (!window.isComparing) {
+                  this.setTitle(null, {
+                    text: 'Built chart in ' + (new Date() - start) + 'ms'
+                  });
+                }
               }
+            },
+            zoomType: 'x'
+          },
+
+          xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: { // don't display the dummy year
+              month: '%e. %b',
+              year: '%b'
+            },
+            title: {
+              text: 'Date'
             }
           },
-          zoomType: 'x'
-        },
 
-        rangeSelector: {
+          yAxis: {
+            title: {
+              text: 'USD ($)'
+            }
+          },
 
-          buttons: [{
-            type: 'day',
-            count: 3,
-            text: '3d'
-          }, {
-            type: 'week',
-            count: 1,
-            text: '1w'
-          }, {
-            type: 'month',
-            count: 1,
-            text: '1m'
-          }, {
-            type: 'month',
-            count: 6,
-            text: '6m'
-          }, {
-            type: 'year',
-            count: 1,
-            text: '1y'
-          }, {
-            type: 'all',
-            text: 'All'
-          }],
-          selected: 3
-        },
-
-        yAxis: {
           title: {
-            text: 'USD ($)'
-          }
-        },
+            text: 'ETF top bids over time'
+          },
 
-        title: {
-          text: 'ETF top bids over time'
-        },
+          subtitle: {
+            text: 'Built chart in ...' // dummy text to reserve space for dynamic subtitle
+          },
 
-        subtitle: {
-          text: 'Built chart in ...' // dummy text to reserve space for dynamic subtitle
-        },
+          series: [{
+            name: 'USD',
+            data: data.data,
+            tooltip: {
+              valueDecimals: 1,
+              valueSuffix: '$'
+            }
+          }]
 
-        series: [{
-          name: 'USD',
-          data: data.data,
-          pointStart: data.pointStart,
-          pointInterval: data.pointInterval,
-          tooltip: {
-            valueDecimals: 1,
-            valueSuffix: '$'
-          }
-        }]
+        });
+      };
 
-      });
+      $http.get('/getETFBidHistory').then($scope.initializeChart);
+
+      function updateChart() {
+        $scope.getOrderData();
+        $http.get('/getETFBidHistory').then(function(data) {
+          // console.log(data.data);
+          // $scope.chart.series[0].setData(data.data,true);
+          $scope.initializeChart(data);
+        });
+      }
+
+      $interval(updateChart, 10000);
+      $scope.$on('$routeChangeStart', updateChart);
+
+      $scope.openModal = function () {
+        var modalInstance = $uibModal.open({
+          // animation: $ctrl.animationsEnabled,
+          ariaLabelledBy: 'modal-title',
+          ariaDescribedBy: 'modal-body',
+          templateUrl: 'submitTradeModal.html',
+          controller: 'ModalInstanceCtrl',
+          controllerAs: '$ctrl',
+          scope: $scope,
+          resolve: {}
+        });
+
+        modalInstance.result.then(function (selectedItem) {
+          $scope.selected = selectedItem;
+        }, function () {
+          // $log.info('Modal dismissed at: ' + new Date());
+        });
+      };
+    }
+  ]);
+
+  mainApp.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance) {
+    var $ctrl = this;
+
+    $ctrl.ok = function () {
+      console.log('ok');
+      $scope.submitOrder();
+      $uibModalInstance.close();
     };
 
-    $http.get('/getETFBidHistory').then($scope.initializeChart);
+    $ctrl.cancel = function () {
+      console.log('cancel');
+      $uibModalInstance.dismiss('cancel');
+    };
+  });
 
-    $scope.$on('$routeChangeStart', function(event) {
-      $scope.getOrderData();
-      $http.get('/getETFBidHistory').then($scope.initializeChart);
-    });
+  // Please note that the close and dismiss bindings are from $uibModalInstance.
+  mainApp.component('modalComponent', {
+    templateUrl: 'submitTradeModal.html',
+    bindings: {
+      resolve: '<',
+      close: '&',
+      dismiss: '&'
+    },
+    controller: function () {
+      var $ctrl = this;
 
-  }]);
+      $ctrl.$onInit = function () {};
+
+      $ctrl.ok = function () {
+        console.log('ok');
+        $ctrl.close({$value: 'ok'});
+      };
+
+      $ctrl.cancel = function () {
+        console.log('cancel');
+        $ctrl.dismiss({$value: 'cancel'});
+      };
+    }
+  });
 })();

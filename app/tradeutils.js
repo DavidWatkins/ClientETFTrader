@@ -38,7 +38,7 @@ exports.submitOrder = function(req, res, callback) {
         // Once we're done streaming the response, parse it as json.
         response.on('end', function() {
             var json = JSON.parse(content);
-            var marketEnd = new Date()
+            var marketEnd = new Date();
             marketEnd.setHours(8);
             marketEnd.setMinutes(30);
             marketEnd.setSeconds(0);
@@ -77,14 +77,14 @@ exports.submitOrder = function(req, res, callback) {
                         fulfillBy: new Date(tradeFulfillBy),
                         status: "Unfulfilled"
                     }
-                }
+                };
 
                 tradeArray.push(trade);
             }
 
             Trade.collection.insert(tradeArray, function(err, docs){
                 // tickServer();
-            })
+            });
         });
         res.send("Success");
     }).end();
@@ -128,7 +128,7 @@ var tickServer = function() {
             })
         });
     }).end();
-}
+};
 
 var executeTrades = function(current_time) {
     Trade.find({"local.fulfillBy" : { $lt: current_time }, "local.status": "Unfulfilled"}, function(err, data) {
@@ -139,7 +139,7 @@ var executeTrades = function(current_time) {
             var promises = _.map(data, function(x) {
 
                 console.log(x.local.fulfillBy);
-                console.log("-------")
+                console.log("-------");
 
                 var request_options = {
                     host: '127.0.0.1',
@@ -177,7 +177,7 @@ var executeTrades = function(current_time) {
             Promise.all(promises).then(tickServer());
         }
     }); 
-}
+};
 
 exports.getAllOrders = function (req, res, callback) {
     Order.find(function(err, orders) {
@@ -215,13 +215,23 @@ exports.getTradeWithOrderId = function(req, res, callback) {
     });
 };
 
+function zip(arrays) {
+    return arrays[0].map(function(_,i){
+        return arrays.map(function(array){return array[i]})
+    });
+}
+
 exports.getTopBidHistory = function(req, res) {
 
     ExchangeRef.find().sort({'local.timestamp': -1}).exec(function(err, data) {
         data = _.pluck(data, 'local');
-        data = _.pluck(data, 'top_bid');
-        data = _.pluck(data, 'price');
-        res.send(data);
+
+        var prices = _.pluck(data, 'top_bid');
+        prices = _.pluck(prices, 'price');
+
+        var dates = _.pluck(data, 'timestamp');
+
+        res.send(zip([dates, prices]));
     });
 
 };

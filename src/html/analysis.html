@@ -1,0 +1,112 @@
+<div id="container1" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
+<div id="container2" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+
+<script>
+    $(function () {
+        $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
+
+            Highcharts.chart('container1', {
+
+                chart: {
+                    type: 'bar',
+                    zoomType: 'x'
+                },
+
+                title: {
+                    text: 'Trade deviations of percentage'
+                },
+
+                xAxis: {
+                    type: 'datetime'
+                },
+
+                yAxis: {
+                    title: {
+                        text: null
+                    }
+                },
+
+                tooltip: {
+                    crosshairs: true,
+                    shared: true,
+                    valueSuffix: '°C'
+                },
+
+                legend: {
+                    enabled: false
+                },
+
+                series: [{
+                    name: 'Temperatures',
+                    data: data
+                }]
+
+            });
+        });
+
+    });
+
+    $(function () {
+        Highcharts.chart('container2', {
+            chart: {
+                type: 'area',
+                spacingBottom: 30
+            },
+            title: {
+                text: 'Number of successful trades over time'
+            },
+            subtitle: {
+                text: '* Jane\'s banana consumption is unknown',
+                floating: true,
+                align: 'right',
+                verticalAlign: 'bottom',
+                y: 15
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                verticalAlign: 'top',
+                x: 150,
+                y: 100,
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+            },
+            xAxis: {
+                categories: ['Apples', 'Pears', 'Oranges', 'Bananas', 'Grapes', 'Plums', 'Strawberries', 'Raspberries']
+            },
+            yAxis: {
+                title: {
+                    text: 'Y-Axis'
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value;
+                    }
+                }
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + '</b><br/>' +
+                            this.x + ': ' + this.y;
+                }
+            },
+            plotOptions: {
+                area: {
+                    fillOpacity: 0.5
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'John',
+                data: [0, 1, 4, 4, 5, 2, 3, 7]
+            }, {
+                name: 'Jane',
+                data: [1, 0, 3, null, 3, 1, 2, 1]
+            }]
+        });
+    });
+</script>

@@ -7,9 +7,11 @@
   ],
   "dependencies": {
     "bootstrap": "*",
-    "angular":"1.5.8",
-    "angular-route":"1.5.8",
-    "jquery":"*",
-    "highcharts":"*"
+    "angular": "1.5.8",
+    "angular-route": "1.5.8",
+    "jquery": "*",
+    "highcharts": "*",
+    "angular-loading-overlay": "^1.1.1",
+    "angular-bootstrap": "^2.2.0"
   }
 }

@@ -26,7 +26,11 @@ paths = {
 		'bower_components/bootstrap/dist/js/bootstrap.min.js',
 		'bower_components/highcharts/highcharts.js',
 		'bower_components/highcharts/js/modules/exporting.js',
-		'bower_components/angular-route/angular-route.min.js'
+		'bower_components/angular-route/angular-route.min.js',
+		'bower_components/angular-loading-overlay/dist/angular-loading-overlay.js',
+		'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
+		'bower_components/angular/angular.min.js.map',
+		'bower_components/angular-route/angular-route.min.js.map'
 	],
 	js:     ['src/js/**/*.js'],
 	dist:   './dist/',
