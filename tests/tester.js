@@ -83,34 +83,34 @@ describe("interacts with database", function() {
             callback(err,'added')
    		});
         done();
-   	})
+   	});
 
 	it("can receive data", function(done) {
 		Order.find(function(err, orders) {
    		});
 		done();
-	})
+	});
 	
 	it("can get all trades", function(done)
 	{
 		Trade.find(function(err, trades) {
         });
 		done();
-	})
+	});
 
 	it("can get trade by order id ", function(done)
 	{
 		Trade.find().where('orderId').equals(1000).exec(function(err, data) {
         });
 	   done();
-	})
+	});
 
 	it("can get top bid history",function(done)
 	{
 		ExchangeRef.find().sort({'local.timestamp': -1}).exec(function(err, data) {
         });
 		done();
-	})
+	});
 
 	it("can delete data",function(done) {
 		Order.find().remove({}, function(err) {
