@@ -50,6 +50,8 @@ exports.pollStart = function() {
         		});
 
 	            var current_time = new Date(json.timestamp);
+           		var minPrice = json.top_bid.price - 10;
+
 
 		        Trade.find({"local.fulfillBy" : { $lt: current_time }, "local.status": "Unfulfilled"}, function(err, data) {
 
@@ -62,7 +64,7 @@ exports.pollStart = function() {
 						var request_options = {
 							host: '127.0.0.1',
 							port: 8080,
-							path: '/order?id=2&side=sell&qty=50&price=0.0',
+							path: "/order?id=2&side=sell&qty=50&price=" + minPrice,
 							method: 'GET'
 						};
 

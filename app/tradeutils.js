@@ -7,6 +7,7 @@ var ExchangeRef = require('./models/exchangeref.js');
 var Order = require('./models/order.js');
 var Trade = require('./models/trade.js');
 
+//assuming fixed trade size
 var TRADESIZE = 50;
 
 //8 hour market
@@ -45,20 +46,17 @@ exports.submitOrder = function(req, res, callback) {
 
             var timestamp = json.timestamp;
             var timestampDate = new Date(timestamp);
-
             var timeLeft = marketEnd.getTime() - timestampDate.getTime();
 
             var data = req.body;
-
             var orderId = new Date().getTime();
-
             var newOrder = new Order();
 
             newOrder.local.amount = data.amount;
             newOrder.local.orderId = orderId;
             newOrder.local.status = "Unfulfilled";
 
-            // save the user
+            // save the order
             newOrder.save(function(err) {
                 if (err)
                     console.log(err);
