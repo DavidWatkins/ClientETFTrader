@@ -28,10 +28,12 @@
 //       .getAttribute('value'))
 //       .toBe('yourname@example.org');
 // });
-
+global.document=require('jsdom').jsdom('<html></html>');
+global.window=document.defaultView;
 var Mongoose = require('mongoose').Mongoose;
 var mongoose = new Mongoose();
-
+var JQ = require('jquery')(window)
+var Unit = require('jasmine-jquery')
 var mockgoose = require('mockgoose');
 
 describe("sanity check", function() {
