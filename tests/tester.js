@@ -42,6 +42,18 @@ describe("sanity check", function() {
 	});
 });
 
+/*describe(" fixture test",function()
+{	beforeEach(function()
+	{
+	jasmine.getFixtures().fixturesPath='../../src/html';
+	jasmine.getFixtures().load("dashboard.html")
+	})
+	it("loads shit", function()
+	{
+		expect(true).toBe(true)
+	})
+});
+*/
 //Server Checks
 
 var dbfunctions = require('../app/tradeutils');

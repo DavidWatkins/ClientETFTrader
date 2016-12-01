@@ -17,6 +17,7 @@
     "bson": "*",
     "connect-flash": "~0.1.1",
     "cookie-parser": "~1.0.0",
+    "dev": "^0.1.3",
     "ejs": "~0.8.5",
     "express": "~4.0.0",
     "express-json2csv": "*",
@@ -24,6 +25,7 @@
     "jasmine-jquery": "^2.1.1",
     "jquery": "^3.1.1",
     "jsdom": "^9.8.3",
+    "karma": "^1.3.0",
     "lodash": "*",
     "method-override": "~1.0.0",
     "mongoose": "~3.8.1",
@@ -44,6 +46,7 @@
   "main": "server.js",
   "devDependencies": {
     "bower": "*",
+    "browserify": "^13.1.1",
     "del": "^2.2.2",
     "gulp": "*",
     "gulp-clean": "*",
@@ -61,7 +64,15 @@
     "gulp-util": "*",
     "gulp-watch": "*",
     "jshint": "2.*",
+    "karma-browserify": "^5.1.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-jasmine": "^1.0.2",
     "mockgoose": "^6.0.8",
-    "underscore": "^1.8.3"
+    "spawn-sync": "^1.0.15",
+    "thread-sleep": "^1.0.4",
+    "try-thread-sleep": "^1.0.0",
+    "underscore": "^1.8.3",
+    "watchify": "^3.7.0"
   }
 }
