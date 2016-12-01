@@ -92,6 +92,7 @@ exports.pollStart = function() {
 											"local.status": "Fulfilled"
 										}
 									}, function() {
+										updateOrderValues(x.local.orderId);
 									})
 								}
 
@@ -104,3 +105,30 @@ exports.pollStart = function() {
 
 	}, 5000);
 };
+
+var updateOrderValues = function(orderId) {
+    Order.find({"local.orderId": orderId}, function(err, data) {
+    	Trade.find({"local.orderId": orderId, "local.status": "Fulfilled"}, function(err, data) {
+    		if (data.length > 0) {
+	    		var fulfilled = 0;
+	    		var sumPrice = 0;
+
+	    		_.each(data, function(x) {
+	    			fulfilled += x.local.amount;
+	    			sumPrice += x.local.price;
+	    		})
+
+	    		var avgPrice = sumPrice / data.length;
+
+	    		Order.update({"local.orderId": orderId}, { $set: 
+	    			{
+	    				"local.fulfilled": fulfilled,
+	    				"local.averagePrice": avgPrice
+	    			}
+	    		}, function() {
+	    			
+	    		})
+    		}
+    	})
+    })
+}

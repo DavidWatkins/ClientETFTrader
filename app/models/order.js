@@ -7,6 +7,8 @@ var orderschema = mongoose.Schema({
 
     local : {
         amount        : Number,
+        fulfilled    : { type: Number, default: 0 },
+        averagePrice  : { type: Number, default: -1 },
         orderId       : { type: Number },
         orderType     : {
             type: String,
