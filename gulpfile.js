@@ -63,7 +63,7 @@ gulp.task('jshint-node', function () {
 });
 
 //test suite
-gulp.task('tests', function () {
+gulp.task('test', function () {
 	return gulp
 		.src(paths.tests)
 		.pipe(jasmine());
