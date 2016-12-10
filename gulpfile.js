@@ -12,7 +12,7 @@ var   gulp = require('gulp')
 	, nodemon = require('gulp-nodemon')
 	, clean = require('gulp-clean')
 	, runSequence = require('run-sequence')
-	, jasmine = require('gulp-jasmine')
+	, mocha = require('gulp-mocha')
 	, paths;
 
 paths = {
@@ -66,10 +66,7 @@ gulp.task('jshint-node', function () {
 gulp.task('test', function () {
 	return gulp
 		.src(paths.tests)
-		.pipe(jasmine())
-		.once('end', function() {
-			process.exit(1);
-		});
+		.pipe(mocha({reporter: 'nyan'}));
 });
 
 //Copy all bower dependencies

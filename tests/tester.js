@@ -34,9 +34,11 @@ var mongoose = new Mongoose();
 
 var mockgoose = require('mockgoose');
 
+var expect = require('expect.js');
+
 describe("sanity check", function() {
 	it("checks if true is equal to true", function() {
-		expect(true).toBe(true);
+		expect(true).to.be(true);
 	});
 });
 
@@ -50,7 +52,7 @@ var ExchangeRef= require('../app/models/exchangeref.js');
 describe("interacts with database", function() {
 	beforeEach(function(done) {
         mockgoose(mongoose).then(function() {	
-        	mongoose.connect('mongodb://localhost/TestingDB',function(err)
+        	mongoose.createConnection('mongodb://localhost/TestingDB',function(err)
         	{ 
         		done(err)
         	});
