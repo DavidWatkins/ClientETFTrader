@@ -66,7 +66,10 @@ gulp.task('jshint-node', function () {
 gulp.task('test', function () {
 	return gulp
 		.src(paths.tests)
-		.pipe(jasmine());
+		.pipe(jasmine())
+		.once('end', function() {
+			process.exit(1);
+		});
 });
 
 //Copy all bower dependencies
@@ -134,5 +137,9 @@ gulp.task('nodemon', ['develop'], function () {
          stream.emit('restart', 10) ; // restart the server in 10 seconds
       })
 });
+
+gulp.doneCallback = function (err) {
+  process.exit(err ? 1 : 0);
+};
 
 gulp.task('default', ['build']);
