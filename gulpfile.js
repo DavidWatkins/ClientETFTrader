@@ -13,6 +13,7 @@ var   gulp = require('gulp')
 	, clean = require('gulp-clean')
 	, runSequence = require('run-sequence')
 	, mocha = require('gulp-mocha')
+	, cover = require('gulp-coverage')
 	, paths;
 
 paths = {
@@ -70,9 +71,15 @@ gulp.task('jshint-node', function () {
 
 //test suite
 gulp.task('test', function () {
-	return gulp
-		.src(paths.tests)
-		.pipe(mocha({reporter: 'nyan'}));
+	return gulp.src('tests/**/*.js', { read: false })
+		.pipe(cover.instrument({
+		    pattern: paths.node,
+		    debugDirectory: 'debug'
+		}))
+		.pipe(mocha())
+		.pipe(cover.gather())
+		.pipe(cover.format())
+		.pipe(gulp.dest('reports'));
 });
 
 //Copy all bower dependencies

@@ -5,3 +5,6 @@ build/*
 npm-debug.log
 .idea/*
 .coveralls.yml
+.coverdata/*
+debug/*
+.coverrun
