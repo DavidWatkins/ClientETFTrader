@@ -1,6 +1,5 @@
-# ClientETFTrader
+# ClientETFTrader [![Build Status](https://travis-ci.org/DavidWatkins/ClientETFTrader.svg?branch=master)](https://travis-ci.org/DavidWatkins/ClientETFTrader)
 Allows a client to sell their ETF
-[![Build Status](https://travis-ci.org/DavidWatkins/ClientETFTrader.svg?branch=master)](https://travis-ci.org/DavidWatkins/ClientETFTrader)
 # Run Instructions
 ```bash
 npm install
