@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 
 var _ = require('underscore');
@@ -6,6 +7,7 @@ var http = require('http');
 var ExchangeRef = require('./models/exchangeref.js');
 var Order = require('./models/order.js');
 var Trade = require('./models/trade.js');
+var Mongoose = require('mongoose');
 
 //assuming fixed trade size
 var TRADESIZE = 50;
@@ -159,7 +161,7 @@ var executeTrades = function(current_time) {
                     response.on('end', function() {
                         var json = JSON.parse(content);
                         if (json.qty > 0) {
-                            Trade.update({_id: new ObjectId(x._id)}, { $set: 
+                            Trade.update({_id: new Mongoose.Types.ObjectId(x._id)}, { $set: 
                                 {
                                     "local.fulfilledAt": current_time,
                                     "local.price": json.avg_price,

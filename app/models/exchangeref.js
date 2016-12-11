@@ -1,3 +1,6 @@
+/*jslint node: true */
+"use strict";
+
 var mongoose = require('mongoose');
 
 // define the schema for our user model

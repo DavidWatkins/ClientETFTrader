@@ -1,4 +1,5 @@
-// app/routes.js
+/*jslint node: true */
+"use strict";
 var express = require('express');
 var dbfunctions = require("./tradeutils");
 

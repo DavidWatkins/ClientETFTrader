@@ -1,0 +1,43 @@
+Linting code output:
+
+[18:57:41] Using gulpfile /mnt/c/workspace/ClientETFTrader/gulpfile.js
+[18:57:41] Starting 'jshint-web'...
+[18:57:41] Starting 'jshint-node'...
+[18:57:41] Finished 'jshint-web' after 202 ms
+app/tradesubmitter.js: line 59, col 47, Missing semicolon.
+app/tradesubmitter.js: line 93, col 39, Missing semicolon.
+app/tradesubmitter.js: line 84, col 37, 'json' used out of scope.
+app/tradesubmitter.js: line 88, col 60, 'json' used out of scope.
+app/tradesubmitter.js: line 98, col 23, Missing semicolon.
+app/tradesubmitter.js: line 43, col 34, 'json' used out of scope.
+app/tradesubmitter.js: line 49, col 45, 'json' used out of scope.
+app/tradesubmitter.js: line 50, col 35, 'json' used out of scope.
+app/tradesubmitter.js: line 116, col 19, Missing semicolon.
+app/tradesubmitter.js: line 127, col 19, Missing semicolon.
+app/tradesubmitter.js: line 129, col 11, Missing semicolon.
+app/tradesubmitter.js: line 130, col 7, Missing semicolon.
+app/tradesubmitter.js: line 131, col 2, Missing semicolon.
+
+13 errors
+app/tradeutils.js: line 20, col 17, Use '===' to compare with 'null'.
+app/tradeutils.js: line 128, col 15, Missing semicolon.
+app/tradeutils.js: line 122, col 41, 'json' used out of scope.
+app/tradeutils.js: line 171, col 31, Missing semicolon.
+app/tradeutils.js: line 220, col 58, Missing semicolon.
+app/tradeutils.js: line 220, col 60, Missing semicolon.
+app/tradeutils.js: line 250, col 44, A leading decimal point can be confused with a dot: '.5'.
+app/tradeutils.js: line 264, col 22, Don't make functions within a loop.
+
+8 errors
+tests/tester.js: line 59, col 26, Missing semicolon.
+tests/tester.js: line 87, col 34, Missing semicolon.
+tests/tester.js: line 133, col 7, Missing semicolon.
+
+3 errors6
+[18:57:41] Finished 'jshint-node' after 418 ms
+[18:57:41] Starting 'jshint'...
+[18:57:41] Finished 'jshint' after 105 μs
+
+
+The two components that are known to be not working are tradesubmitter.js and tradeutils.js. They both are missing some error checking on their inputs and are having trouble santizing what they receive. The static analysis does not show these problems, however, mostly it indicates problems of style with the code. We have since fixed all of the above errors and are now getting no error messages from the static analysis. We have also allowed our test suite to properly indicate code coverage and we get a fairly high coverage. 
+

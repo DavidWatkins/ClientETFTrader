@@ -19,6 +19,12 @@ paths = {
 	css:    ['src/css/*.css'],
 	assets: ['src/assets/*'],
 	html:   ['src/html/*'],
+	node:   [
+		'server.js',
+		'app/**/*.js',
+		'config/**/*.js',
+		'tests/**/*.js'
+	],
 	libs:   [
 		'bower_components/angular/angular.min.js',
 		'bower_components/jquery/dist/jquery.min.js',
@@ -57,7 +63,7 @@ gulp.task('jshint-web', function () {
 
 gulp.task('jshint-node', function () {
 	return gulp
-			.src('server.js')
+			.src(paths.node)
 			.pipe(jshint())
 			.pipe(jshint.reporter('default'));
 });
@@ -109,6 +115,8 @@ gulp.task('minifycss', function () {
 		.pipe(gulp.dest(paths.dist, {overwrite: true}))
 		.on('error', gutil.log);
 });
+
+gulp.task('jshint', ['jshint-web', 'jshint-node']);
 
 gulp.task('build', ['jshint-web', 'jshint-node', 'copy-vendor', 'copy-assets', 'copy-html', 'uglify', 'minifycss']);
 

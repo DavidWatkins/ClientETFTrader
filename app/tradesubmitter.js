@@ -1,7 +1,4 @@
-/**
- * Created by David on 10/25/2016.
- */
-
+/*jslint node: true */
 "use strict";
 
 var _ = require('underscore');

@@ -1,3 +1,5 @@
+/*jslint node: true */
+/*jslint mocha: true */
 "use strict";
 
 // it('should check controller as', function() {

@@ -1,4 +1,5 @@
-// config/passport.js
+/*jslint node: true */
+"use strict";
 
 // load all the things we need
 var LocalStrategy   = require('passport-local').Strategy;
