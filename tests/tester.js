@@ -56,7 +56,7 @@ describe("interacts with database", function() {
         mockgoose(mongoose).then(function() {	
         	mongoose.createConnection('mongodb://localhost/TestingDB',function(err)
         	{ 
-        		done(err)
+        		done(err);
         	});
         });
     });
@@ -84,7 +84,7 @@ describe("interacts with database", function() {
 		trade.save(function(err,callback) {
             if (err)
                 console.log(err);
-            callback(err,'added')
+            callback(err,'added');
    		});
         done();
    	});
@@ -130,5 +130,5 @@ describe("interacts with database", function() {
                 console.log(err);
     	});
     	done();
-	})
+	});
 });

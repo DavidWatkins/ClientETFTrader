@@ -17,7 +17,7 @@ var TRADESIZE = 50;
 //also simulates polling and completion of trades
 exports.submitOrder = function(req, res, callback) {
 
-    if(req.body == null) {
+    if(req.body === null) {
         res.send("Invalid Query");
         return;
     }
@@ -111,8 +111,9 @@ var tickServer = function() {
 
         // Once we're done streaming the response, parse it as json.
         response.on('end', function() {
+            var json;
             try {
-                var json = JSON.parse(content);
+                json = JSON.parse(content);
             } catch (e) {
                 tickServer();
                 return;
@@ -125,7 +126,7 @@ var tickServer = function() {
                 if (data) {
                     executeTrades(current_time);
                 }
-            })
+            });
         });
     }).end();
 };
@@ -168,7 +169,7 @@ var executeTrades = function(current_time) {
                                     "local.status": "Fulfilled"
                                 }
                             }, function() {
-                            })
+                            });
                         }
                     });
                 }).end();
@@ -216,9 +217,15 @@ exports.getTradeWithOrderId = function(req, res, callback) {
 };
 
 function zip(arrays) {
-    return arrays[0].map(function(_,i){
-        return arrays.map(function(array){return array[i]})
-    });
+    return arrays[0].map(
+        function(_,i){
+            return arrays.map(
+                function(array){
+                    return array[i];
+                }
+            );
+        }
+    );
 }
 
 exports.getTopBidHistory = function(req, res) {
@@ -240,6 +247,11 @@ exports.getTopBidHistory = function(req, res) {
 //shouldn't be necessary now
 exports.generateRandomShit = function() {
 
+    function err(err) {
+        if(err)
+            console.log(err);
+    }
+
     ExchangeRef.remove({}, function(err,removed) {
 
         var timestamp = new Date().getTime();
@@ -247,7 +259,7 @@ exports.generateRandomShit = function() {
         var bidPrice = 100.00;
 
         for(var i=0;i<500;i++) {
-            askPrice += ((Math.random())-.5);
+            askPrice += ((Math.random())-0.5);
 
             var scm = new ExchangeRef();
             scm.local.top_ask = {
@@ -261,10 +273,7 @@ exports.generateRandomShit = function() {
             };
             scm.local.id = null;
 
-            scm.save(function(err) {
-                if (err)
-                    console.log(err);
-            });
+            scm.save(err);
         }
     });
 

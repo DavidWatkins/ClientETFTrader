@@ -33,8 +33,9 @@ exports.pollStart = function() {
 
 	        // Once we're done streaming the response, parse it as json.
 	        response.on('end', function() {
+	        	var json;
 	            try {
-	                var json = JSON.parse(content);
+	                json = JSON.parse(content);
 	            } catch (e) {
 	                return;
 	            }
@@ -56,7 +57,7 @@ exports.pollStart = function() {
 
 						console.log(current_time);
 						console.log(x.local.fulfillBy);
-						console.log("-------")
+						console.log("-------");
 
 						var request_options = {
 							host: '127.0.0.1',
@@ -76,8 +77,9 @@ exports.pollStart = function() {
 
 							// Once we're done streaming the response, parse it as json.
 							response.on('end', function() {
+								var json;
 								try {
-									var json = JSON.parse(content);
+									json = JSON.parse(content);
 								} catch (e) {
 									return;
 								}
@@ -90,12 +92,12 @@ exports.pollStart = function() {
 										}
 									}, function() {
 										updateOrderValues(x.local.orderId);
-									})
+									});
 								}
 
 							});
 						}).end();
-					})
+					});
 				});
 	        });
 	    }).end();
@@ -113,7 +115,7 @@ var updateOrderValues = function(orderId) {
 	    		_.each(data, function(x) {
 	    			fulfilled += x.local.amount;
 	    			sumPrice += x.local.price;
-	    		})
+	    		});
 
 	    		var avgPrice = sumPrice / data.length;
 
@@ -124,8 +126,8 @@ var updateOrderValues = function(orderId) {
 	    			}
 	    		}, function() {
 	    			
-	    		})
+	    		});
     		}
-    	})
-    })
-}
+    	});
+    });
+};
