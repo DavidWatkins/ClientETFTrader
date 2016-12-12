@@ -276,6 +276,20 @@ exports.generateRandomShit = function() {
             scm.save(err);
         }
     });
+};
 
+exports.clearDatabase = function() {
+    Order.find().remove({}, function(err) {
+        if (err)
+            console.log(err);
+    });
+    Trade.find().remove({}, function(err) {
+        if (err)
+                console.log(err);
+    });
+    ExchangeRef.find().remove({}, function(err) {
+        if (err)
+                console.log(err);
+    });
 };
 

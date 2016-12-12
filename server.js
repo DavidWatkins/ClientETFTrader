@@ -1,4 +1,7 @@
 #!/bin/env node
+/*jslint node: true */
+"use strict";
+
 //ETF Trader Node application
 var express = require('express');
 var favicon = require('serve-favicon');
@@ -14,7 +17,7 @@ var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
 var configDB = require('./config/database.js');
-var dbfunctions = require("./app/tradeutils");
+var tradeutils = require("./app/tradeutils");
 var tradesubmitter = require("./app/tradesubmitter.js");
 var ExchangeRef = require('./app/models/exchangeref.js');
 var Order = require('./app/models/order.js');
@@ -22,8 +25,6 @@ var Trade = require('./app/models/trade.js');
 var __dirname = 'dist/';
 
 // configuration ===============================================================
-mongoose.connect(configDB.url); // connect to our database
-
 require('./config/passport')(passport); // pass passport for configuration
 
 var ETFTraderApp = function() {
@@ -132,18 +133,16 @@ var ETFTraderApp = function() {
             console.log('%s: Node server started on %s:%d ...',
                         Date(Date.now() ), self.ipaddress, self.port);
         });
-        Order.find().remove({}, function(err) {
-            if (err)
-                console.log(err);
+
+        mongoose.connect(configDB.url, function(err) { // connect to our database
+        	if(err) {
+        		console.log("Could not connect to mongo database. Did you call mongod?");
+        		process.exit();
+        	}
         });
-        Trade.find().remove({}, function(err) {
-            if (err)
-                    console.log(err);
-        });
-        ExchangeRef.find().remove({}, function(err) {
-            if (err)
-                    console.log(err);
-        });
+
+        tradeutils.clearDatabase();
+
         tradesubmitter.pollStart();
     };
 

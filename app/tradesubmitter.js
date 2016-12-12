@@ -124,9 +124,7 @@ var updateOrderValues = function(orderId) {
 	    				"local.fulfilled": fulfilled,
 	    				"local.averagePrice": avgPrice
 	    			}
-	    		}, function() {
-	    			
-	    		});
+	    		}, function() {});
     		}
     	});
     });
