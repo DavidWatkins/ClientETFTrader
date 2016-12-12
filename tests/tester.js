@@ -2,34 +2,7 @@
 /*jslint mocha: true */
 "use strict";
 
-// it('should check controller as', function() {
-//   var container = element(by.id('ctrl-as-exmpl'));
-//     expect(container.element(by.model('settings.name'))
-//       .getAttribute('value')).toBe('John Smith');
-
-//   var firstRepeat =
-//       container.element(by.repeater('contact in settings.contacts').row(0));
-//   var secondRepeat =
-//       container.element(by.repeater('contact in settings.contacts').row(1));
-
-//   expect(firstRepeat.element(by.model('contact.value')).getAttribute('value'))
-//       .toBe('408 555 1212');
-
-//   expect(secondRepeat.element(by.model('contact.value')).getAttribute('value'))
-//       .toBe('john.smith@example.org');
-
-//   firstRepeat.element(by.buttonText('clear')).click();
-
-//   expect(firstRepeat.element(by.model('contact.value')).getAttribute('value'))
-//       .toBe('');
-
-//   container.element(by.buttonText('add')).click();
-
-//   expect(container.element(by.repeater('contact in settings.contacts').row(2))
-//       .element(by.model('contact.value'))
-//       .getAttribute('value'))
-//       .toBe('yourname@example.org');
-// });
+var express = require('express');
 
 var Mongoose = require('mongoose').Mongoose;
 var mongoose = new Mongoose();
@@ -46,15 +19,22 @@ describe("sanity check", function() {
 
 //Server Checks
 
-var dbfunctions = require('../app/tradeutils');
+var tradeutils = require('../app/tradeutils');
+var tradesubmitter = require('../app/tradesubmitter');
+var routes = require('../app/routes');
+// var server = require('../server');
 var Order = require('../app/models/order.js');
 var Trade = require('../app/models/trade.js');
 var ExchangeRef= require('../app/models/exchangeref.js');
 
+var passport = require('passport');
+var configDB = require('../config/database.js');
+var __dirname = 'dist/';
+
 describe("interacts with database", function() {
 	beforeEach(function(done) {
         mockgoose(mongoose).then(function() {	
-        	mongoose.createConnection('mongodb://localhost/TestingDB',function(err)
+        	mongoose.createConnection('mongodb://localhost/TestingDB', function(err)
         	{ 
         		done(err);
         	});
@@ -130,5 +110,12 @@ describe("interacts with database", function() {
                 console.log(err);
     	});
     	done();
+	});
+
+	it("Overall Test", function(done) {
+			require('../config/passport')(passport); // pass passport for configuration
+			var app = server.appFactory();
+			app.initializeServer();
+			app.start();
 	});
 });

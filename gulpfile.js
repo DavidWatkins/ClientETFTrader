@@ -27,17 +27,17 @@ paths = {
 		'tests/**/*.js'
 	],
 	libs:   [
-		'bower_components/angular/angular.min.js',
-		'bower_components/jquery/dist/jquery.min.js',
-		'bower_components/bootstrap/dist/css/bootstrap.min.css',
-		'bower_components/bootstrap/dist/js/bootstrap.min.js',
-		'bower_components/highcharts/highcharts.js',
-		'bower_components/highcharts/js/modules/exporting.js',
-		'bower_components/angular-route/angular-route.min.js',
-		'bower_components/angular-loading-overlay/dist/angular-loading-overlay.js',
-		'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
-		'bower_components/angular/angular.min.js.map',
-		'bower_components/angular-route/angular-route.min.js.map'
+		'./bower_components/angular/angular.min.js',
+		'./bower_components/jquery/dist/jquery.min.js',
+		'./bower_components/bootstrap/dist/css/bootstrap.min.css',
+		'./bower_components/bootstrap/dist/js/bootstrap.min.js',
+		'./bower_components/highcharts/highcharts.js',
+		'./bower_components/highcharts/js/modules/exporting.js',
+		'./bower_components/angular-route/angular-route.min.js',
+		'./bower_components/angular-loading-overlay/dist/angular-loading-overlay.js',
+		'./bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
+		'./bower_components/angular/angular.min.js.map',
+		'./bower_components/angular-route/angular-route.min.js.map'
 	],
 	js:     ['src/js/**/*.js'],
 	dist:   './dist/',
@@ -73,8 +73,7 @@ gulp.task('jshint-node', function () {
 gulp.task('test', function () {
 	return gulp.src('tests/**/*.js', { read: false })
 		.pipe(cover.instrument({
-		    pattern: paths.node,
-		    debugDirectory: 'debug'
+		    pattern: paths.node
 		}))
 		.pipe(mocha())
 		.pipe(cover.gather())
@@ -84,9 +83,12 @@ gulp.task('test', function () {
 
 //Copy all bower dependencies
 gulp.task('copy-vendor', function () {
-	gulp.src(paths.libs)
-		.pipe(gulp.dest(paths.dist, {overwrite: true}))
-		.on('error', gutil.log);
+
+	for(var lib in paths.libs) {
+		gulp.src(paths.libs[lib])
+			.pipe(gulp.dest(paths.dist))
+			.on('error', gutil.log);
+	}
 
 	return gulp.src(paths.favicon)
 		.pipe(gulp.dest(paths.dist, {overwrite: true}))
@@ -112,6 +114,7 @@ gulp.task('uglify', function () {
 		// .pipe(uglify({outSourceMaps: false}))
 		.pipe(gulp.dest(paths.dist, {overwrite: true}));
 });
+
 gulp.task('minifycss', function () {
 	return gulp.src(paths.css)
 		.pipe(minifycss({

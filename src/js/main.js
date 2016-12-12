@@ -19,12 +19,6 @@
         .when("/pastTrades", {
           templateUrl : "pastTrades.html"
         })
-        .when("/analytics", {
-          templateUrl: "analysis.html"
-        })
-        .when("/exportToCSV", {
-          templateUrl: "exportToCSV.html"
-        })
         .otherwise({redirectTo: '#/dashboard'});
   }]);
 
@@ -91,6 +85,12 @@
       $scope.bannerVisible = false;
       $scope.msg = "";
 
+      $scope.currentOrder = null;
+
+      $scope.changeCurrentTrade = function(currentOrder) {
+        $scope.currentOrder = currentOrder;
+      }
+
       $scope.getOrderData = function() {
         OrderService.getAllOrders().then(function (orders) {
           $scope.orders = orders.data;
@@ -110,6 +110,8 @@
             for (var orderKey in orders) {
               var order = orders[orderKey];
               order.trades = [];
+
+              var total = 0;
               for (var tradeKey in trades) {
                 var trade = trades[tradeKey];
                 trade.local.fulfillBy = new Date(trade.local.fulfillBy);

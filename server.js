@@ -148,6 +148,8 @@ var ETFTraderApp = function() {
 
 };
 
+exports.appFactory = ETFTraderApp;
+
 /**
  *  main():  Main code.
  */

@@ -1,49 +1,69 @@
 <h1 class="page-header">Previous Orders</h1>
-<div class="table-responsive">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Order ID</th>
-        <th>Amount</th>
-        <th>Order Type</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr data-toggle="collapse" data-target="#demo{{order.local.orderId}}" class="accordion-toggle" ng-repeat-start="order in orderData">
-          <td>{{order.local.orderId}}</td>
-          <td>{{order.local.amount}}</td>
-          <td>{{order.local.orderType}}</td>
-          <td ng-class="order.local.status === 'Unfulfilled' ? 'info' : order.local.status === 'Fulfilled' ? 'success' : 'danger'">{{order.local.status}}</td>
-        </tr>
-        <tr ng-repeat-end>
-          <td colspan="12" class="hiddenRow">
-            <div class="accordian-body collapse" id="demo{{order.local.orderId}}">
-              <h3 class='sub-header'>Divided Trades</h3>
-              <table class="table table-striped">
-                <thead>
-                  <th>Amount</th>
-                  <th>Price</th>
-                  <th>Fulfill By</th>
-                  <th>Fulfilled At</th>
-                  <th>Order Type</th>
-                  <th>Status</th>
-                </thead>
-                <tbody>
-                  <tr ng-repeat="trade in order.trades">
-                    <td>{{trade.local.amount}}</td>
-                    <td>{{trade.local.price == -1 ? "Unfulfilled" : trade.local.price}}</td>
-                    <td>{{trade.local.fulfillBy.getDate()  + "-" + (trade.local.fulfillBy.getMonth()+1) + "-" + trade.local.fulfillBy.getFullYear() +
-                      " " + trade.local.fulfillBy.getHours() + ":" + trade.local.fulfillBy.getMinutes()}}</td>
-                    <td>{{trade.local.fulfilledAt}}</td>
-                    <td>{{trade.local.orderType}}</td>
-                    <td ng-class="trade.local.status === 'Unfulfilled' ? 'info' : trade.local.status === 'Fulfilled' ? 'success' : 'danger'">{{trade.local.status}}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div> 
-          </td>
-        </tr>
-    </tbody>
-  </table>  
+<div class="row">
+  <div class="col-lg-6 col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-bar-chart-o fa-fw"></i> Current Orders
+      </div>
+      <!-- /.panel-heading -->
+      <div class="panel-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Amount</th>
+              <th>Order Type</th>
+              <th>Percent Filled</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <a href="" ng-click="changeCurrentTrade(order.local.orderId)" ng-repeat="order in orderData">
+              <tr>
+                <td>{{order.local.orderId}}</td>
+                <td>{{order.local.amount}}</td>
+                <td>{{order.local.orderType}}</td>
+                <td>{{order.local.percentFilled}}</td>
+                <td ng-class="order.local.status === 'Unfulfilled' ? 'info' : order.local.status === 'Fulfilled' ? 'success' : 'danger'">{{order.local.status}}</td>
+              </tr>
+            </a>
+          </tbody>
+        </table>
+      </div>
+      <!-- /.panel-body -->
+    </div>
+  </div>
+  <div class="col-lg-6 col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-bar-chart-o fa-fw"></i> Order #{{currentOrder.local.orderId}} Details
+      </div>
+      <!-- /.panel-heading -->
+      <div class="panel-body">
+        <table class="table table-striped" ng-if="currentOrder!==undefined">
+          <thead>
+            <th>Amount</th>
+            <th>Price</th>
+            <th>Fulfill By</th>
+            <th>Fulfilled At</th>
+            <th>Order Type</th>
+            <th>Percent Filled</th>
+            <th>Status</th>
+          </thead>
+          <tbody>
+            <tr ng-repeat="trade in currentOrder.trades">
+              <td>{{trade.local.amount}}</td>
+              <td>{{trade.local.price == -1 ? "Unfulfilled" : trade.local.price}}</td>
+              <td>{{trade.local.fulfillBy.getDate()  + "-" + (trade.local.fulfillBy.getMonth()+1) + "-" + trade.local.fulfillBy.getFullYear() + " " + trade.local.fulfillBy.getHours() + ":" + trade.local.fulfillBy.getMinutes()}}</td>
+              <td>{{trade.local.fulfilledAt}}</td>
+              <td>{{trade.local.orderType}}</td>
+              <td>{{trade.local.amount/currentOrder.local.amount}}</td>
+              <td ng-class="trade.local.status === 'Unfulfilled' ? 'info' : trade.local.status === 'Fulfilled' ? 'success' : 'danger'">{{trade.local.status}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- /.panel-body -->
+    </div>
+  </div>
 </div>

@@ -1,45 +1,121 @@
-<!--ng-class="{{banner.bannerSuccess ? 'success alert-success' : 'alert alert-danger'}}"-->
+ng-class="{{banner.bannerSuccess ? 'success alert-success' : 'alert alert-danger'}}"-->
 <h1 class="page-header">Dashboard</h1>
 <div ng-if="banner.bannerVisible">
   {{banner.msg}}
 </div>
 
-<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-
-<hr>
-
-<h2 class="sub-header">Place Trade</h2>
-<div class="form-group">
-  <label for="price">Amount of shares to sell of ETF</label>
-  <input type="text" id="price" class="form-control" placeholder="Price" ng-model="quantityContainer.quantity">
+<!-- /.row -->
+<div class="row">
+  <div class="col-lg-4 col-md-612">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-xs-3">
+            <i class="fa fa-comments fa-5x"></i>
+          </div>
+          <div class="col-xs-9 text-right">
+            <div class="huge">{{pendingTradeCount}}</div>
+            <div>Pending Trades</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4 col-md-12">
+    <div class="panel panel-green">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-xs-3">
+            <i class="fa fa-check fa-5x"></i>
+          </div>
+          <div class="col-xs-9 text-right">
+            <div class="huge">{{successfulTradeCount}}</div>
+            <div>Successful Trades</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4 col-md-12">
+    <div class="panel panel-red">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-xs-3">
+            <i class="fa fa-times fa-5x"></i>
+          </div>
+          <div class="col-xs-9 text-right">
+            <div class="huge">{{failedTradeCount}}</div>
+            <div>Failed Trades</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<button type="button" class="btn btn-primary" ng-click="openModal()">Add Trade</button>
+<!-- /.row -->
 
-<hr>
+<div class="row">
+  <div class="col-lg-8">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-bar-chart-o fa-fw"></i> Market Data
+      </div>
+      <!-- /.panel-heading -->
+      <div class="panel-body">
+        <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+      </div>
+      <!-- /.panel-body -->
+    </div>
+    <!-- /.panel -->
 
-<h2 class="sub-header">5 Most Recent Trades</h2>
-<td colspan="12">
-  <table class="table table-striped">
-    <thead>
-    <th>Order ID</th>
-    <th>Amount</th>
-    <th>Price</th>
-    <th>Fulfill By</th>
-    <th>Fulfilled At</th>
-    <th>Order Type</th>
-    <th>Status</th>
-    </thead>
-    <tbody>
-    <tr ng-repeat="trade in trades|limitTo:5">
-      <td>{{trade.local.orderId}}</td>
-      <td>{{trade.local.amount}}</td>
-      <td>{{trade.local.price == -1 ? "Unfulfilled" : trade.local.price}}</td>
-      <td>{{trade.local.fulfillBy.getDate()  + "-" + (trade.local.fulfillBy.getMonth()+1) + "-" + trade.local.fulfillBy.getFullYear() +
-        " " + trade.local.fulfillBy.getHours() + ":" + trade.local.fulfillBy.getMinutes()}}</td>
-      <td>{{trade.local.fulfilledAt}}</td>
-      <td>{{trade.local.orderType}}</td>
-      <td ng-class="trade.local.status === 'Unfulfilled' ? 'info' : trade.local.status === 'Fulfilled' ? 'success' : 'danger'">{{trade.local.status}}</td>
-    </tr>
-    </tbody>
-  </table>
-</td>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Place Trade
+      </div>
+      <!-- /.panel-heading -->
+      <div class="panel-body">
+        <div class="form-group">
+          <label for="price">Amount of shares to sell of ETF (Max: 10000 Min: 1)</label>
+          <input type="text" id="price" max="10000" min="1" class="form-control" placeholder="Price" ng-model="quantityContainer.quantity">
+        </div>
+        <button type="button" class="btn btn-primary" ng-click="openModal()">Add Trade</button>
+      </div>
+      <!-- /.panel-body -->
+    </div>
+    <!-- /.panel -->
+
+  </div>
+  <!-- /.col-lg-8 -->
+  <div class="col-lg-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-clock-o fa-fw"></i> Five Most Recent Trades
+      </div>
+      <!-- /.panel-heading -->
+      <div class="panel-body">
+        <div class="list-group">
+
+          <a href="#" class="list-group-item" ng-repeat="trade in trades|limitTo:5" data-toggle="collapse" data-target="#demo{{trade.local.orderId}}">
+            <i ng-class="trade.local.status === 'Unfulfilled' ? 'fa fa-question' : trade.local.status === 'Fulfilled' ? 'fa fa-check' : 'fa fa-times'"></i> Trade {{trade.local.orderId}}
+            <span class="pull-right text-muted small"><i class="fa fa-chevron-circle-down"></span>
+          </a>
+<!--           <div id="demo{{trade.local.orderId}}" class="sublinks collapse" ng-repeat-end>
+            <a class="list-group-item"><strong>Amount: </strong>{{trade.local.amount}}</a>
+            <a class="list-group-item"><strong>Price: </strong>{{trade.local.price == -1 ? "Unfulfilled" : trade.local.price}}</a>
+            <a class="list-group-item"><strong>Fulfilled By: </strong>{{trade.local.fulfillBy.getDate()  + "-" + (trade.local.fulfillBy.getMonth()+1) + "-" + trade.local.fulfillBy.getFullYear() + " " + trade.local.fulfillBy.getHours() + ":" + trade.local.fulfillBy.getMinutes()}}</a>
+            <a class="list-group-item"><strong>Fulfilled At: </strong>{{trade.local.fulfilledAt}}</a>
+            <a class="list-group-item"><strong>Order Type: </strong>{{trade.local.orderType}}</a>
+            <a class="list-group-item" ng-class="trade.local.status === 'Unfulfilled' ? 'info' : trade.local.status === 'Fulfilled' ? 'success' : 'danger'"><strong>Status: </strong>{{trade.local.status}}</a>
+            <a class="list-group-item"><strong>Amount: </strong>{{trade.local.amount}}</a>
+          </div> -->
+        </div>
+        <!-- /.list-group -->
+        <a href="#/pastTrades" class="btn btn-default btn-block">View All Trades</a>
+      </div>
+      <!-- /.panel-body -->
+    </div>
+    <!-- /.panel -->
+  </div>
+  <!-- /.col-lg-4 -->
+</div>
+<!-- /.row 
