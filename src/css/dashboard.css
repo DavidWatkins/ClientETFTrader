@@ -25,6 +25,10 @@ body {
   border: 0;
 }
 
+.submitted .ng-invalid{
+      border: 1px solid red;
+  }
+
 /*
  * Sidebar
  */

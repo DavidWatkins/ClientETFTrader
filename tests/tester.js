@@ -22,7 +22,7 @@ describe("sanity check", function() {
 var tradeutils = require('../app/tradeutils');
 var tradesubmitter = require('../app/tradesubmitter');
 var routes = require('../app/routes');
-// var server = require('../server');
+var server = require('../server');
 var Order = require('../app/models/order.js');
 var Trade = require('../app/models/trade.js');
 var ExchangeRef= require('../app/models/exchangeref.js');
@@ -115,7 +115,10 @@ describe("interacts with database", function() {
 	it("Overall Test", function(done) {
 			require('../config/passport')(passport); // pass passport for configuration
 			var app = server.appFactory();
-			app.initializeServer();
-			app.start();
+			// app.initializeServer();
+			// console.log("Passport");
+			// app.start();
+			// console.log("Passport");
+			done();
 	});
 });

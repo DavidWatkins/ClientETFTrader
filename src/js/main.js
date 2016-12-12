@@ -2,24 +2,24 @@
   'use strict';
 
   var mainApp = angular.module("mainApp", ["ngRoute", "bsLoadingOverlay", "ui.bootstrap"])
-      .run(function(bsLoadingOverlayService) {
-        bsLoadingOverlayService.setGlobalConfig({
-          templateUrl: 'loading-overlay-template.html'
-        });
-      });
+  .run(function(bsLoadingOverlayService) {
+    bsLoadingOverlayService.setGlobalConfig({
+      templateUrl: 'loading-overlay-template.html'
+    });
+  });
 
   mainApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider
-        .when("/", {
-          templateUrl : "dashboard.html"
-        })
-        .when("/dashboard", {
-          templateUrl : "dashboard.html"
-        })
-        .when("/pastTrades", {
-          templateUrl : "pastTrades.html"
-        })
-        .otherwise({redirectTo: '#/dashboard'});
+    .when("/", {
+      templateUrl : "dashboard.html"
+    })
+    .when("/dashboard", {
+      templateUrl : "dashboard.html"
+    })
+    .when("/pastTrades", {
+      templateUrl : "pastTrades.html"
+    })
+    .otherwise({redirectTo: '#/dashboard'});
   }]);
 
   mainApp.factory('OrderService', ['$http', '$q', function($http, $q) {
@@ -97,11 +97,10 @@
           return OrderService.getAllTrades();
         }).then(function (trades) {
           var orders = $scope.orders;
+          console.log($scope.orders);
           trades = trades.data;
           $scope.trades = trades;
           $scope.trades.sort(function(a, b) {
-            console.log(a);
-            console.log(b);
             return new Date(a.local.timestamp) <= new Date(b.local.timestamp);
           });
 
@@ -128,6 +127,21 @@
                 }
               }
             }
+
+
+            $scope.pendingTradeCount = 0;
+            $scope.successfulTradeCount = 0;
+            $scope.failedTradeCount = 0;
+
+            for(var tradeKey in trades) {
+              var trade = trades[tradeKey];
+              if(trade.local.status === "Unfulfilled")
+                $scope.pendingTradeCount++;
+              else if(trade.local.status === "Fulfilled")
+                $scope.successfulTradeCount++;
+              else
+                $scope.failedTradeCount++;
+            }
           }
 
           $scope.orderData = orders;
@@ -151,7 +165,7 @@
           $scope.showOverlay();
           $scope.canPostTrade = false;
           OrderService.placeOrder($scope.quantityContainer.quantity).then(function(data, err) {
-            console.log($scope.banner);
+            // console.log($scope.banner);
 
             if(err) $scope.banner.msg = "Trade was not posted";
             else $scope.banner.msg = "Trade Successfully Posted";
@@ -165,69 +179,13 @@
         }
       };
 
-      // $scope.initializeChart = function(data) {
-      //   console.log(data.data);
-      //   //Create the chart
-      //   var start = new Date();
-      //   var chart = $('#container').highcharts({
-      //     chart: {
-      //       events: {
-      //         load: function () {
-      //           $scope.chart = this;
-      //           if (!window.isComparing) {
-      //             this.setTitle(null, {
-      //               text: 'Built chart in ' + (new Date() - start) + 'ms'
-      //             });
-      //           }
-      //         }
-      //       },
-      //       zoomType: 'x',
-      //       type: 'spline'
-      //     },
-      //
-      //     yAxis: {
-      //       title: {
-      //         text: 'USD ($)'
-      //       }
-      //     },
-      //
-      //     title: {
-      //       text: 'ETF top bids over time'
-      //     },
-      //
-      //     subtitle: {
-      //       text: 'Built chart in ...' // dummy text to reserve space for dynamic subtitle
-      //     },
-      //
-      //     tooltip: {
-      //       formatter: function () {
-      //         return '<b>' + this.series.name + '</b><br/>' +
-      //             Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-      //             Highcharts.numberFormat(this.y, 2);
-      //       }
-      //     },
-      //
-      //     series: [{
-      //       name: 'USD',
-      //       data: data.data,
-      //       tooltip: {
-      //         valueDecimals: 1,
-      //         valueSuffix: '$'
-      //       }
-      //     }]
-      //
-      //   });
-      //
-      //   console.log(chart);
-      //   $scope.chart = chart;
-      // };
-
       $scope.initializeChart = function(data) {
         // console.log(data);
         //Create the chart
         var start = new Date();
         $('#container').highcharts({
           chart: {
+            type: 'spline',
             events: {
               load: function () {
                 if (!window.isComparing) {
@@ -243,31 +201,31 @@
           xAxis: {
             type: 'datetime',
             dateTimeLabelFormats: { // don't display the dummy year
-              month: '%e. %b',
-              year: '%b'
-            },
-            title: {
-              text: 'Date'
-            }
+            month: '%e. %b',
+            year: '%b'
           },
-
-          yAxis: {
-            title: {
-              text: 'USD ($)'
-            }
-          },
-
           title: {
-            text: 'ETF top bids over time'
-          },
+            text: 'Date'
+          }
+        },
 
-          subtitle: {
+        yAxis: {
+          title: {
+            text: 'USD ($)'
+          }
+        },
+
+        title: {
+          text: 'ETF top bids over time'
+        },
+
+        subtitle: {
             text: 'Built chart in ...' // dummy text to reserve space for dynamic subtitle
           },
 
           series: [{
             name: 'USD',
-            data: data.data,
+            data: data.data.slice(Math.max(data.data.length-20, 0)),
             tooltip: {
               valueDecimals: 1,
               valueSuffix: '$'
@@ -310,22 +268,22 @@
         });
       };
     }
-  ]);
+    ]);
 
-  mainApp.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance) {
-    var $ctrl = this;
+mainApp.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance) {
+  var $ctrl = this;
 
-    $ctrl.ok = function () {
-      console.log('ok');
-      $scope.submitOrder();
-      $uibModalInstance.close();
-    };
+  $ctrl.ok = function () {
+    console.log('ok');
+    $scope.submitOrder();
+    $uibModalInstance.close();
+  };
 
-    $ctrl.cancel = function () {
-      console.log('cancel');
-      $uibModalInstance.dismiss('cancel');
-    };
-  });
+  $ctrl.cancel = function () {
+    console.log('cancel');
+    $uibModalInstance.dismiss('cancel');
+  };
+});
 
   // Please note that the close and dismiss bindings are from $uibModalInstance.
   mainApp.component('modalComponent', {

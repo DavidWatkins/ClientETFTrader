@@ -1,4 +1,3 @@
-ng-class="{{banner.bannerSuccess ? 'success alert-success' : 'alert alert-danger'}}"-->
 <h1 class="page-header">Dashboard</h1>
 <div ng-if="banner.bannerVisible">
   {{banner.msg}}
@@ -22,7 +21,7 @@ ng-class="{{banner.bannerSuccess ? 'success alert-success' : 'alert alert-danger
     </div>
   </div>
   <div class="col-lg-4 col-md-12">
-    <div class="panel panel-green">
+    <div class="panel panel-success">
       <div class="panel-heading">
         <div class="row">
           <div class="col-xs-3">
@@ -37,7 +36,7 @@ ng-class="{{banner.bannerSuccess ? 'success alert-success' : 'alert alert-danger
     </div>
   </div>
   <div class="col-lg-4 col-md-12">
-    <div class="panel panel-red">
+    <div class="panel panel-danger">
       <div class="panel-heading">
         <div class="row">
           <div class="col-xs-3">
@@ -74,11 +73,11 @@ ng-class="{{banner.bannerSuccess ? 'success alert-success' : 'alert alert-danger
       </div>
       <!-- /.panel-heading -->
       <div class="panel-body">
-        <div class="form-group">
+        <form class="well" name="formTest" ng-class="{'submitted': submitted}" ng-submit="openModal()" >
           <label for="price">Amount of shares to sell of ETF (Max: 10000 Min: 1)</label>
-          <input type="text" id="price" max="10000" min="1" class="form-control" placeholder="Price" ng-model="quantityContainer.quantity">
+          <input type="number" id="price" max="10000" min="1" class="form-control" placeholder="Price" ng-model="quantityContainer.quantity" required>
         </div>
-        <button type="button" class="btn btn-primary" ng-click="openModal()">Add Trade</button>
+        <button type="submit" class="btn btn-default" ng-click="submitted= true;openModal()">Add Trade</button>
       </div>
       <!-- /.panel-body -->
     </div>
@@ -95,11 +94,10 @@ ng-class="{{banner.bannerSuccess ? 'success alert-success' : 'alert alert-danger
       <div class="panel-body">
         <div class="list-group">
 
-          <a href="#" class="list-group-item" ng-repeat="trade in trades|limitTo:5" data-toggle="collapse" data-target="#demo{{trade.local.orderId}}">
+          <a href="" class="list-group-item" ng-repeat-start="trade in trades|limitTo:5" data-toggle="collapse" data-target="#demo{{trade.local.orderId}}">
             <i ng-class="trade.local.status === 'Unfulfilled' ? 'fa fa-question' : trade.local.status === 'Fulfilled' ? 'fa fa-check' : 'fa fa-times'"></i> Trade {{trade.local.orderId}}
-            <span class="pull-right text-muted small"><i class="fa fa-chevron-circle-down"></span>
           </a>
-<!--           <div id="demo{{trade.local.orderId}}" class="sublinks collapse" ng-repeat-end>
+          <div id="demo{{trade.local.orderId}}" class="sublinks collapse" ng-repeat-end>
             <a class="list-group-item"><strong>Amount: </strong>{{trade.local.amount}}</a>
             <a class="list-group-item"><strong>Price: </strong>{{trade.local.price == -1 ? "Unfulfilled" : trade.local.price}}</a>
             <a class="list-group-item"><strong>Fulfilled By: </strong>{{trade.local.fulfillBy.getDate()  + "-" + (trade.local.fulfillBy.getMonth()+1) + "-" + trade.local.fulfillBy.getFullYear() + " " + trade.local.fulfillBy.getHours() + ":" + trade.local.fulfillBy.getMinutes()}}</a>
@@ -107,7 +105,7 @@ ng-class="{{banner.bannerSuccess ? 'success alert-success' : 'alert alert-danger
             <a class="list-group-item"><strong>Order Type: </strong>{{trade.local.orderType}}</a>
             <a class="list-group-item" ng-class="trade.local.status === 'Unfulfilled' ? 'info' : trade.local.status === 'Fulfilled' ? 'success' : 'danger'"><strong>Status: </strong>{{trade.local.status}}</a>
             <a class="list-group-item"><strong>Amount: </strong>{{trade.local.amount}}</a>
-          </div> -->
+          </div>
         </div>
         <!-- /.list-group -->
         <a href="#/pastTrades" class="btn btn-default btn-block">View All Trades</a>

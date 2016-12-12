@@ -141,7 +141,7 @@ var ETFTraderApp = function() {
         	}
         });
 
-        tradeutils.clearDatabase();
+        // tradeutils.clearDatabase();
 
         tradesubmitter.pollStart();
     };
@@ -153,6 +153,8 @@ exports.appFactory = ETFTraderApp;
 /**
  *  main():  Main code.
  */
-var zapp = new ETFTraderApp();
-zapp.initialize();
-zapp.start();
+if (require.main === module) {
+    var zapp = new ETFTraderApp();
+    zapp.initialize();
+    zapp.start();
+}

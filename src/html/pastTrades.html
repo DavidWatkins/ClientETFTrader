@@ -3,7 +3,7 @@
   <div class="col-lg-6 col-sm-12">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <i class="fa fa-bar-chart-o fa-fw"></i> Current Orders
+        <i class="fa fa-bar-chart-o fa-fw"></i> Current Orders ({{orders.length}})
       </div>
       <!-- /.panel-heading -->
       <div class="panel-body">
@@ -18,15 +18,13 @@
             </tr>
           </thead>
           <tbody>
-            <a href="" ng-click="changeCurrentTrade(order.local.orderId)" ng-repeat="order in orderData">
-              <tr>
+              <tr ng-click="changeCurrentTrade(order)" ng-repeat="order in orders">
                 <td>{{order.local.orderId}}</td>
                 <td>{{order.local.amount}}</td>
                 <td>{{order.local.orderType}}</td>
-                <td>{{order.local.percentFilled}}</td>
+                <td>{{order.local.fulfilled/order.local.amount}}</td>
                 <td ng-class="order.local.status === 'Unfulfilled' ? 'info' : order.local.status === 'Fulfilled' ? 'success' : 'danger'">{{order.local.status}}</td>
               </tr>
-            </a>
           </tbody>
         </table>
       </div>
