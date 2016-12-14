@@ -14,23 +14,16 @@
   "dependencies": {
     "bcrypt-nodejs": "latest",
     "body-parser": "~1.0.0",
-    "bson": "*",
     "connect-flash": "~0.1.1",
     "cookie-parser": "~1.0.0",
-    "ejs": "~0.8.5",
     "express": "~4.0.0",
-    "express-json2csv": "*",
     "express-session": "~1.0.0",
-    "lodash": "*",
-    "method-override": "~1.0.0",
     "mongoose": "~4.4",
     "morgan": "~1.0.0",
     "passport": "~0.1.17",
     "passport-local": "~0.1.6",
-    "request": "^2.76.0",
     "run-sequence": "*",
-    "serve-favicon": "~2.2.1",
-    "tiny-lr": "*"
+    "serve-favicon": "~2.2.1"
   },
   "engines": {
     "node": ">= 0.10",
@@ -41,6 +34,7 @@
   "main": "server.js",
   "devDependencies": {
     "bower": "*",
+    "browser-sync": "^2.18.5",
     "del": "^2.2.2",
     "expect.js": "^0.3.1",
     "gulp": "*",
@@ -48,7 +42,6 @@
     "gulp-concat": "*",
     "gulp-connect": "*",
     "gulp-coverage": "^0.3.38",
-    "gulp-download": "*",
     "gulp-jshint": "*",
     "gulp-minify-css": "*",
     "gulp-minify-html": "*",
@@ -58,7 +51,6 @@
     "gulp-rename": "*",
     "gulp-uglify": "*",
     "gulp-util": "*",
-    "gulp-watch": "*",
     "jshint": "2.*",
     "mockgoose": "^6.0.8",
     "underscore": "^1.8.3"

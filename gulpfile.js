@@ -14,11 +14,11 @@ var   gulp = require('gulp')
 , runSequence = require('run-sequence')
 , mocha = require('gulp-mocha')
 , cover = require('gulp-coverage')
+, browserSync = require('browser-sync')
 , paths;
 
 paths = {
 	css:    ['src/css/*.css'],
-	assets: ['src/assets/*'],
 	html:   ['src/html/*'],
 	node:   [
 	'server.js',
@@ -46,30 +46,58 @@ paths = {
 	tests: './tests/*.js'
 };
 
-
 //CLEAN
 gulp.task('clean', function () {
-	return gulp.src(paths.dist, {read: false})
+	return gulp
+	.src(paths.dist)
 	.pipe(clean({force: true}));
 });
 
+//Copy all bower dependencies
+gulp.task('bower', function () {
+	gulp.src(paths.favicon)
+	.pipe(gulp.dest(paths.dist, {overwrite: true}))
+	.on('error', gutil.log);
 
-gulp.task('jshint-web', function () { 
-	return gulp
-	.src(paths.js)
-	.pipe(jshint())
-	.pipe(jshint.reporter('default'));
-		  // .pipe(jshint.reporter('fail')); Add this back to prevent build
-		});
+	return gulp.src(paths.libs)
+	.pipe(gulp.dest(paths.dist))
+	.on('error', gutil.log);
+});
 
-gulp.task('jshint-node', function () {
+//Static files
+gulp.task('html', function () {
+	return gulp.src(paths.html)
+	.pipe(gulp.dest(paths.dist, {overwrite: true}))
+	.on('error', gutil.log);
+});
+
+gulp.task('js', function () {
+	return gulp.src(paths.js)
+	.pipe(concat('main.min.js'))
+	// .pipe(uglify({outSourceMaps: false}))
+	.pipe(gulp.dest(paths.dist, {overwrite: true}));
+});
+
+gulp.task('css', function () {
+	return gulp.src(paths.css)
+	.pipe(minifycss({
+		keepSpecialComments: false,
+		removeEmpty: true
+	}))
+	.pipe(rename({suffix: '.min'}))
+	.pipe(gulp.dest(paths.dist, {overwrite: true}))
+	.on('error', gutil.log);
+});
+
+//Static Analysis
+gulp.task('jshint', function () { 
 	return gulp
-	.src(paths.node)
+	.src(paths.js.concat(paths.node)) //All javascript
 	.pipe(jshint())
 	.pipe(jshint.reporter('default'));
 });
 
-//test suite
+//Test suite
 gulp.task('test', function () {
 	return gulp.src('tests/**/*.js', { read: false })
 	.pipe(cover.instrument({
@@ -82,54 +110,7 @@ gulp.task('test', function () {
 	.pipe(gulp.dest('reports'));
 });
 
-//Copy all bower dependencies
-gulp.task('copy-vendor', function () {
-
-	for(var lib in paths.libs) {
-		gulp.src(paths.libs[lib])
-		.pipe(gulp.dest(paths.dist))
-		.on('error', gutil.log);
-	}
-
-	return gulp.src(paths.favicon)
-	.pipe(gulp.dest(paths.dist, {overwrite: true}))
-	.on('error', gutil.log);
-});
-
-gulp.task('copy-assets', function () {
-	return gulp.src(paths.assets)
-	.pipe(gulp.dest(paths.dist, {overwrite: true}))
-	.on('error', gutil.log);
-});
-
-gulp.task('copy-html', function () {
-	return gulp.src(paths.html)
-	.pipe(gulp.dest(paths.dist, {overwrite: true}))
-	.on('error', gutil.log);
-});
-
-//Shrink down HTML, JS and CSS files
-gulp.task('uglify', function () {
-	return gulp.src(paths.js)
-	.pipe(concat('main.min.js'))
-		// .pipe(uglify({outSourceMaps: false}))
-		.pipe(gulp.dest(paths.dist, {overwrite: true}));
-	});
-
-gulp.task('minifycss', function () {
-	return gulp.src(paths.css)
-	.pipe(minifycss({
-		keepSpecialComments: false,
-		removeEmpty: true
-	}))
-	.pipe(rename({suffix: '.min'}))
-	.pipe(gulp.dest(paths.dist, {overwrite: true}))
-	.on('error', gutil.log);
-});
-
-gulp.task('jshint', ['jshint-web', 'jshint-node']);
-
-gulp.task('build', ['jshint-web', 'jshint-node', 'copy-vendor', 'copy-assets', 'copy-html', 'uglify', 'minifycss']);
+gulp.task('build', ['jshint', 'bower', 'html', 'js', 'css']);
 
 gulp.task('develop', function(done) {
 	return runSequence('clean', 'build', function() {
@@ -137,27 +118,65 @@ gulp.task('develop', function(done) {
 	});
 });
 
-gulp.task('nodemon', ['develop'], function () {
-	gulp.doneCallback = function (err) { };
+//Live development
 
-	var stream = nodemon({ script: 'server.js'
-		, ext: 'html js css'
-		, ignore: [paths.dist + '*']
-		, watch: [paths.src]
-		, tasks: ['develop'] });
-	
-	return stream
-	.on('restart', function () {
-		console.log('restarted!')
-	})
-	.on('crash', function() {
-		console.error('Application has crashed!\n');
-         stream.emit('restart', 10) ; // restart the server in 10 seconds
-     });
+// we'd need a slight delay to reload browsers
+// connected to browser-sync after restarting nodemon
+var BROWSER_SYNC_RELOAD_DELAY = 500;
+
+gulp.task('nodemon', ['develop'], function (cb) {
+  gulp.doneCallback = function (err) { };
+  var called = false;
+  return nodemon({
+
+    // nodemon our expressjs server
+    script: 'server.js',
+
+    // watch core server file(s) that require server restart on change
+    watch: paths.node
+  })
+    .on('start', function onStart() {
+      // ensure start only got called once
+      if (!called) { cb(); }
+      called = true;
+    })
+    .on('restart', function onRestart() {
+      // reload connected browsers after a slight delay
+      setTimeout(function reload() {
+        browserSync.reload({
+          stream: false
+        });
+      }, BROWSER_SYNC_RELOAD_DELAY);
+    });
+});
+
+gulp.task('browser-sync', ['nodemon'], function () {
+
+  // for more browser-sync config options: http://www.browsersync.io/docs/options/
+  browserSync({
+
+    // informs browser-sync to proxy our expressjs app which would run at the following location
+    proxy: 'http://localhost:3002',
+
+    // informs browser-sync to use the following port for the proxied app
+    // notice that the default port is 3000, which would clash with our expressjs
+    port: 4000,
+
+    // open the proxied app in chrome
+    browser: ['firefox']
+  });
+});
+
+gulp.task('bs-reload', function () {
+  browserSync.reload();
 });
 
 gulp.doneCallback = function (err) {
 	process.exit(err ? 1 : 0);
 };
 
-gulp.task('default', ['build']);
+gulp.task('default', ['browser-sync'], function () {
+  gulp.watch(paths.js,   ['js', browserSync.reload]);
+  gulp.watch(paths.css,  ['css']);
+  gulp.watch(paths.html, ['html', 'bs-reload']);
+});
