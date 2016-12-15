@@ -130,7 +130,7 @@ exports.pollStart = function() {
 			for(var orderKey in orders) {
 				var order = orders[orderKey];
 				var status;
-				if(order.local.amount == order.local.fulfilled) {
+				if(order.local.amount >= order.local.fulfilled) {
 					status = "Fulfilled";
 				} else {
 					status = "Unfulfilled";
