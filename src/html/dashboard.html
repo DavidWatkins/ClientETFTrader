@@ -54,7 +54,7 @@
 <!-- /.row -->
 
 <div class="row">
-  <div class="col-lg-8">
+  <div class="col-md-8">
     <div class="panel panel-default">
       <div class="panel-heading">
         <i class="fa fa-bar-chart-o fa-fw"></i> Market Data
@@ -83,36 +83,34 @@
     </div>
     <!-- /.panel -->
 
-  </div>
-  <!-- /.col-lg-8 -->
-  <div class="col-lg-4">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <i class="fa fa-clock-o fa-fw"></i> Five Most Recent Trades
-      </div>
-      <!-- /.panel-heading -->
-      <div class="panel-body">
-        <div class="list-group">
-
-          <a href="" class="list-group-item" ng-repeat-start="trade in trades|limitTo:5" data-toggle="collapse" data-target="#demo{{trade.local.orderId}}">
-            <i ng-class="trade.local.status === 'Unfulfilled' ? 'fa fa-question' : trade.local.status === 'Fulfilled' ? 'fa fa-check' : 'fa fa-times'"></i> Trade {{trade.local.orderId}}
-          </a>
-          <div id="demo{{trade.local.orderId}}" class="sublinks collapse" ng-repeat-end>
-            <a class="list-group-item"><strong>Amount: </strong>{{trade.local.amount}}</a>
-            <a class="list-group-item"><strong>Price: </strong>{{trade.local.price == -1 ? "Unfulfilled" : trade.local.price}}</a>
-            <a class="list-group-item"><strong>Fulfilled By: </strong>{{trade.local.fulfillBy.getDate()  + "-" + (trade.local.fulfillBy.getMonth()+1) + "-" + trade.local.fulfillBy.getFullYear() + " " + trade.local.fulfillBy.getHours() + ":" + trade.local.fulfillBy.getMinutes()}}</a>
-            <a class="list-group-item"><strong>Order Type: </strong>{{trade.local.orderType}}</a>
-            <a class="list-group-item" ng-class="trade.local.status === 'Unfulfilled' ? 'info' : trade.local.status === 'Fulfilled' ? 'success' : 'danger'"><strong>Status: </strong>{{trade.local.status}}</a>
-            <a class="list-group-item"><strong>Amount: </strong>{{trade.local.amount}}</a>
-          </div>
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <i class="fa fa-clock-o fa-fw"></i> Five Most Recent Trades
         </div>
-        <!-- /.list-group -->
-        <a href="#/pastTrades" class="btn btn-default btn-block">View All Trades</a>
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+          <div class="list-group">
+
+            <a href="" class="list-group-item" ng-repeat-start="trade in trades|limitTo:5" data-toggle="collapse" data-target="#demo{{trade.local.orderId}}">
+              <i ng-class="trade.local.status === 'Unfulfilled' ? 'fa fa-question' : trade.local.status === 'Fulfilled' ? 'fa fa-check' : 'fa fa-times'"></i> Trade {{trade.local.orderId}}
+            </a>
+            <div id="demo{{trade.local.orderId}}" class="sublinks collapse" ng-repeat-end>
+              <a class="list-group-item"><strong>Amount: </strong>{{trade.local.amount}}</a>
+              <a class="list-group-item"><strong>Price: </strong>{{trade.local.price == -1 ? "Unfulfilled" : trade.local.price}}</a>
+              <a class="list-group-item"><strong>Fulfilled By: </strong>{{trade.local.fulfillBy.getDate()  + "-" + (trade.local.fulfillBy.getMonth()+1) + "-" + trade.local.fulfillBy.getFullYear() + " " + trade.local.fulfillBy.getHours() + ":" + trade.local.fulfillBy.getMinutes()}}</a>
+              <a class="list-group-item"><strong>Order Type: </strong>{{trade.local.orderType}}</a>
+              <a class="list-group-item" ng-class="trade.local.status === 'Unfulfilled' ? 'info' : trade.local.status === 'Fulfilled' ? 'success' : 'danger'"><strong>Status: </strong>{{trade.local.status}}</a>
+              <a class="list-group-item"><strong>Amount: </strong>{{trade.local.amount}}</a>
+            </div>
+          </div>
+          <!-- /.list-group -->
+          <a href="#/pastTrades" class="btn btn-default btn-block">View All Trades</a>
+        </div>
+        <!-- /.panel-body -->
       </div>
-      <!-- /.panel-body -->
+      <!-- /.panel -->
     </div>
-    <!-- /.panel -->
+    <!-- /.col-lg-4 -->
   </div>
-  <!-- /.col-lg-4 -->
-</div>
-<!-- /.row 
+  <!-- /row -->
