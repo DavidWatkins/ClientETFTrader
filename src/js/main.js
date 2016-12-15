@@ -135,9 +135,9 @@
 
             for(var tradeKey2 in trades) {
               var trade2 = trades[tradeKey2];
-              if(trade.local.status === "Unfulfilled")
+              if(trade2.local.status === "Unfulfilled")
                 $scope.pendingTradeCount++;
-              else if(trade.local.status === "Fulfilled")
+              else if(trade2.local.status === "Fulfilled")
                 $scope.successfulTradeCount++;
               else
                 $scope.failedTradeCount++;
