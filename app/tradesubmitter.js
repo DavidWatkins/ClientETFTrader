@@ -64,7 +64,7 @@ function handleExecutedTrades(x, current_time) {
 			}
 
 		});
-	}
+	};
 }
 
 function getCurrentTimeFromServer(response) {

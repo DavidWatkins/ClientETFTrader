@@ -89,7 +89,7 @@
 
       $scope.changeCurrentTrade = function(currentOrder) {
         $scope.currentOrder = currentOrder;
-      }
+      };
 
       $scope.getOrderData = function() {
         OrderService.getAllOrders().then(function (orders) {
@@ -133,8 +133,8 @@
             $scope.successfulTradeCount = 0;
             $scope.failedTradeCount = 0;
 
-            for(var tradeKey in trades) {
-              var trade = trades[tradeKey];
+            for(tradeKey in trades) {
+              trade = trades[tradeKey];
               if(trade.local.status === "Unfulfilled")
                 $scope.pendingTradeCount++;
               else if(trade.local.status === "Fulfilled")

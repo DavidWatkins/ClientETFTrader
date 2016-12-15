@@ -8,7 +8,7 @@ module.exports = function(app, passport, __dirname) {
     // =====================================
     // HOME PAGE (with login links) ========
     // =====================================
-    app.get('/dashboard', isLoggedIn, function(req, res) {
+    app.get('/dashboard', function(req, res) {
         res.render('dashboard.ejs', {
             user : req.user // get the user out of session and pass to template
         });
@@ -90,7 +90,7 @@ module.exports = function(app, passport, __dirname) {
     // process the login form
     app.post('/login', passport.authenticate('local-login', {
         successRedirect : '/dashboard', // redirect to the secure profile section
-        failureRedirect : '/login', // redirect back to the signup page if there is an error
+        failureRedirect : '/dashboard', // redirect back to the signup page if there is an error
         failureFlash : true // allow flash messages
     }));
 
@@ -102,6 +102,8 @@ module.exports = function(app, passport, __dirname) {
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
+
+    console.log("Called");
 
     // if user is authenticated in the session, carry on 
     if (req.isAuthenticated())

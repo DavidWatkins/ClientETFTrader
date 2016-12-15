@@ -23,6 +23,7 @@
     "passport": "~0.1.17",
     "passport-local": "~0.1.6",
     "run-sequence": "*",
+    "ejs": "*",
     "serve-favicon": "~2.2.1"
   },
   "engines": {
