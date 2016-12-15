@@ -101,7 +101,6 @@
             <a class="list-group-item"><strong>Amount: </strong>{{trade.local.amount}}</a>
             <a class="list-group-item"><strong>Price: </strong>{{trade.local.price == -1 ? "Unfulfilled" : trade.local.price}}</a>
             <a class="list-group-item"><strong>Fulfilled By: </strong>{{trade.local.fulfillBy.getDate()  + "-" + (trade.local.fulfillBy.getMonth()+1) + "-" + trade.local.fulfillBy.getFullYear() + " " + trade.local.fulfillBy.getHours() + ":" + trade.local.fulfillBy.getMinutes()}}</a>
-            <a class="list-group-item"><strong>Fulfilled At: </strong>{{trade.local.fulfilledAt}}</a>
             <a class="list-group-item"><strong>Order Type: </strong>{{trade.local.orderType}}</a>
             <a class="list-group-item" ng-class="trade.local.status === 'Unfulfilled' ? 'info' : trade.local.status === 'Fulfilled' ? 'success' : 'danger'"><strong>Status: </strong>{{trade.local.status}}</a>
             <a class="list-group-item"><strong>Amount: </strong>{{trade.local.amount}}</a>

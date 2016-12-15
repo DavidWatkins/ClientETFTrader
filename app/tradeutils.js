@@ -64,6 +64,7 @@ exports.submitOrder = function(req, res, callback) {
                     console.log(err);
             });
 
+            var remaining = data.amount;
             var numTrades = data.amount/TRADESIZE;
             var separation = timeLeft/numTrades;
 
@@ -72,12 +73,14 @@ exports.submitOrder = function(req, res, callback) {
                 var tradeFulfillBy = timestampDate.getTime() + (i * separation);
                 var trade = {
                     local: {
-                        amount: TRADESIZE,
+                        amount: Math.min(TRADESIZE, remaining),
                         orderId: orderId,
                         fulfillBy: new Date(tradeFulfillBy),
                         status: "Unfulfilled"
                     }
                 };
+
+                remaining -= TRADESIZE;
 
                 tradeArray.push(trade);
             }

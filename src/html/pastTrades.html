@@ -22,7 +22,7 @@
                 <td>{{order.local.orderId}}</td>
                 <td>{{order.local.amount}}</td>
                 <td>{{order.local.orderType}}</td>
-                <td>{{order.local.fulfilled/order.local.amount}}</td>
+                <td>{{(order.local.fulfilled/order.local.amount) * 100}}%</td>
                 <td ng-class="order.local.status === 'Unfulfilled' ? 'info' : order.local.status === 'Fulfilled' ? 'success' : 'danger'">{{order.local.status}}</td>
               </tr>
           </tbody>
@@ -53,9 +53,8 @@
               <td>{{trade.local.amount}}</td>
               <td>{{trade.local.price == -1 ? "Unfulfilled" : trade.local.price}}</td>
               <td>{{trade.local.fulfillBy.getDate()  + "-" + (trade.local.fulfillBy.getMonth()+1) + "-" + trade.local.fulfillBy.getFullYear() + " " + trade.local.fulfillBy.getHours() + ":" + trade.local.fulfillBy.getMinutes()}}</td>
-              <td>{{trade.local.fulfilledAt}}</td>
               <td>{{trade.local.orderType}}</td>
-              <td>{{trade.local.amount/currentOrder.local.amount}}</td>
+              <td>{{(trade.local.amount/currentOrder.local.amount) * 100}}%</td>
               <td ng-class="trade.local.status === 'Unfulfilled' ? 'info' : trade.local.status === 'Fulfilled' ? 'success' : 'danger'">{{trade.local.status}}</td>
             </tr>
           </tbody>
